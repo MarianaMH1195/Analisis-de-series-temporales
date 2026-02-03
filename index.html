@@ -1,159 +1,772 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detective de Datos: Análisis de Series Temporales</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <meta name="description" content="Detective de Datos - Aprende análisis de series temporales de forma interactiva">
+    <title>🔍 Detective de Datos | Análisis de Series Temporales</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
     <style>
+        /* ========================================
+           CSS VARIABLES
+        ======================================== */
         :root {
+            /* Primary Colors */
             --primary: #667eea;
+            --primary-light: #8b9eff;
+            --primary-dark: #5568d3;
             --secondary: #764ba2;
+            --accent: #f093fb;
+
+            /* Status Colors */
             --success: #4ade80;
+            --success-dark: #22c55e;
             --error: #dc3545;
             --warning: #ffc107;
-            --bg: #f8f9fa;
-            --text: #333;
-            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --info: #0dcaf0;
+
+            /* Grays */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+
+            /* Backgrounds */
+            --bg-light: #ffffff;
+            --bg-page: #f8fafc;
+            --bg-dark: #0f172a;
+            --border-color: #e5e7eb;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.4);
+
+            /* Typography */
+            --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-mono: 'Roboto Mono', 'Consolas', monospace;
+
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 250ms ease;
+            --transition-slow: 350ms ease;
         }
 
-        * {
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: var(--font-main);
+            font-size: 16px;
             line-height: 1.6;
-            padding-bottom: 2rem;
+            color: var(--gray-800);
+            background: var(--bg-page);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Layout */
-        .container {
-            max-width: 1000px;
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: var(--spacing-lg);
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+            width: 100%;
         }
 
-        /* Header */
-        header {
+        /* ========================================
+           HEADER
+        ======================================== */
+        .app-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            text-align: center;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            padding: var(--spacing-lg) var(--spacing-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-lg);
         }
 
-        .header-content h1 {
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
             font-size: 2rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
+            animation: pulse 2s infinite;
         }
 
-        .header-content p {
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-subtitle {
+            font-size: 0.875rem;
             opacity: 0.9;
+            margin-left: var(--spacing-sm);
+            padding-left: var(--spacing-sm);
+            border-left: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.1);
         }
 
         /* Progress Bar */
         .progress-container {
+            max-width: 1200px;
+            margin: var(--spacing-lg) auto 0;
+            padding: 0 var(--spacing-xl);
+        }
+
+        .progress-wrapper {
             display: flex;
-            justify-content: center;
-            margin-top: 1.5rem;
-            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: var(--radius-full);
         }
 
         .progress-step {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 1;
+            transition: var(--transition-base);
+            cursor: pointer;
         }
 
         .progress-step.active {
-            background-color: var(--success);
-            transform: scale(1.2);
-            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            background: var(--success);
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+            transform: scale(1.1);
         }
 
-        /* Cards */
+        .progress-step.completed {
+            background: var(--success-dark);
+        }
+
+        .progress-step-label {
+            position: absolute;
+            top: 100%;
+            margin-top: var(--spacing-xs);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0.8;
+        }
+
+        /* ========================================
+           CARDS & CONTAINERS
+        ======================================== */
         .card {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--card-shadow);
-            transition: transform 0.3s ease;
+            background: var(--bg-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: var(--transition-base);
         }
 
-        .card h2 {
-            color: var(--secondary);
-            margin-bottom: 1rem;
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .phase-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-md);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-header h2 {
             font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
         }
 
-        /* Chart Section */
+        .card-body {
+            padding: var(--spacing-xl);
+        }
+
+        .card-footer {
+            padding: var(--spacing-lg);
+            background: var(--gray-50);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        /* ========================================
+           CHART CONTAINER
+        ======================================== */
+        .chart-section {
+            background: var(--bg-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+            overflow: hidden;
+        }
+
+        .chart-header {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .chart-controls button {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition-fast);
+            font-size: 0.875rem;
+        }
+
+        .chart-controls button:hover {
+            background: var(--gray-100);
+            border-color: var(--primary);
+        }
+
         .chart-container {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--card-shadow);
+            padding: var(--spacing-lg);
             height: 400px;
             position: relative;
         }
 
-        /* Input Controls */
-        .control-group {
-            margin: 1.5rem 0;
+        .chart-legend {
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            border-top: 1px solid var(--border-color);
         }
 
-        select, input[type="number"] {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: var(--radius-sm);
+        }
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-xl);
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
             font-size: 1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-decoration: none;
         }
 
-        select:focus, input:focus {
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            color: white;
+        }
+
+        .btn-lg {
+            padding: var(--spacing-lg) var(--spacing-2xl);
+            font-size: 1.125rem;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ========================================
+           FORM ELEMENTS
+        ======================================== */
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
+            font-size: 1rem;
+            color: var(--gray-800);
+            background: var(--bg-light);
+            transition: var(--transition-base);
+        }
+
+        .form-select:focus,
+        .form-input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
+        .form-select:hover,
+        .form-input:hover {
+            border-color: var(--gray-400);
+        }
+
+        /* Radio Buttons Custom */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .radio-option {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .radio-option input {
+            display: none;
+        }
+
+        .radio-option label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-base);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .radio-option input:checked+label {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--primary);
+        }
+
+        .radio-option:hover label {
+            border-color: var(--primary-light);
+        }
+
+        /* ========================================
+           HINTS PANEL
+        ======================================== */
+        .hints-panel {
+            background: linear-gradient(135deg, #fff9e6, #fff3cd);
+            border: 1px solid var(--warning);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .hints-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .hints-header h4 {
+            font-size: 1rem;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .hints-counter {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .hint-item {
+            padding: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-sm);
+            animation: slideIn 0.3s ease;
+        }
+
+        .hint-level {
+            font-size: 0.75rem;
+            color: var(--warning);
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           EXPLANATION BOX
+        ======================================== */
+        .explanation-box {
+            background: linear-gradient(135deg, #e6fff0, #d1fae5);
+            border: 1px solid var(--success);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            animation: slideIn 0.3s ease;
+        }
+
+        .explanation-box h3 {
+            color: var(--success-dark);
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .explanation-box p {
+            color: var(--gray-700);
+        }
+
+        /* ========================================
+           STATS GRID (Resolution Phase)
+        ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .stat-card {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            text-align: center;
+            transition: var(--transition-base);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-detail {
+            font-size: 0.75rem;
+            color: var(--gray-400);
+            font-family: var(--font-mono);
+        }
+
+        /* ========================================
+           INSIGHTS SECTION
+        ======================================== */
+        .insights-section {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-xl);
+            margin-top: var(--spacing-xl);
+        }
+
+        .insights-section h3 {
+            margin-bottom: var(--spacing-lg);
+            color: var(--gray-800);
+        }
+
+        .insights-list {
+            list-style: none;
+        }
+
+        .insights-list li {
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .insights-list li:last-child {
+            border-bottom: none;
+        }
+
+        .insight-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* ========================================
+           MODAL
+        ======================================== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
 
-        button:hover {
-            background-color: var(--secondary);
-            transform: translateY(-2px);
+        .modal.active {
+            display: flex;
         }
 
-        button:disabled {
-            background-color: #cbd5e1;
-            cursor: not-allowed;
-            transform: none;
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
         }
 
-        /* Phases */
+        .modal-content {
+            position: relative;
+            background: var(--bg-light);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: modalBounce 0.5s ease;
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-content h3 {
+            font-size: 1.75rem;
+            margin-bottom: var(--spacing-md);
+            color: var(--gray-800);
+        }
+
+        .modal-content p {
+            color: var(--gray-600);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+        }
+
+        /* ========================================
+           PHASES
+        ======================================== */
         .phase-section {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -163,229 +776,725 @@
             display: block;
         }
 
-        /* Feedback Elements */
-        .hint-box {
-            background-color: #fff3cd;
-            border-left: 4px solid var(--warning);
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0 8px 8px 0;
-            display: none;
-            animation: slideIn 0.3s ease;
+        /* ========================================
+           SCORE BAR
+        ======================================== */
+        .score-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-md) var(--spacing-xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .explanation-box {
-            background-color: #d1fae5;
-            border-left: 4px solid var(--success);
-            padding: 1rem;
-            margin-top: 1rem;
-            border-radius: 0 8px 8px 0;
-            display: none;
-            animation: slideIn 0.3s ease;
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.875rem;
         }
 
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .stat-card {
-            background: #f1f5f9;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .score-item-value {
+            font-weight: 700;
             color: var(--primary);
+            font-family: var(--font-mono);
         }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: #64748b;
-        }
-
-        /* Animations */
+        /* ========================================
+           ANIMATIONS
+        ======================================== */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        /* Responsive */
-        @media (min-width: 768px) {
-            .interaction-area {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 2rem;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
-            
-            button {
-                width: auto;
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes modalBounce {
+            0% {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        @keyframes drawLine {
+            from {
+                stroke-dashoffset: 1000;
+            }
+
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes barGrow {
+            from {
+                transform: scaleY(0);
+            }
+
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        /* ========================================
+           UTILITY CLASSES
+        ======================================== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-mono {
+            font-family: var(--font-mono);
+        }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-error {
+            color: var(--error);
+        }
+
+        .text-muted {
+            color: var(--gray-500);
+        }
+
+        .mb-sm {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .mb-md {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mb-lg {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .mb-xl {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .logo {
+                flex-direction: column;
+            }
+
+            .logo-subtitle {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+                margin-top: var(--spacing-xs);
+            }
+
+            .progress-step-label {
+                display: none;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .score-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: var(--spacing-md);
+            }
+
+            .btn-lg {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: var(--spacing-md);
+            }
+
+            .card-body {
+                padding: var(--spacing-lg);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                flex-direction: column;
+            }
+
+            .radio-option {
+                min-width: 100%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+
+        /* Padding for fixed score bar */
+        body {
+            padding-bottom: 70px;
         }
     </style>
 </head>
+
 <body>
-
-    <header>
-        <div class="container header-content">
-            <h1>🕵️‍♂️ Detective de Datos</h1>
-            <p>Caso: Retail Store Inventory 2022</p>
-            <div class="progress-container" id="progressBar">
-                <div class="progress-step active"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
-                <div class="progress-step"></div>
+    <div class="app-container">
+        <!-- ========================================
+             HEADER
+        ======================================== -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🔍</span>
+                    <span class="logo-text">Detective de Datos</span>
+                    <span class="logo-subtitle">Caso Retail 2022</span>
+                </div>
+                <nav class="header-nav">
+                    <button class="btn-icon" id="btnTutorial" title="Tutorial" aria-label="Ver tutorial">❓</button>
+                    <button class="btn-icon" id="btnSettings" title="Configuración"
+                        aria-label="Configuración">⚙️</button>
+                </nav>
             </div>
-        </div>
-    </header>
-
-    <main class="container">
-        
-        <!-- Main Chart Display -->
-        <div class="chart-container">
-            <canvas id="mainChart"></canvas>
-        </div>
-
-        <!-- FASE 0: BRIEFING -->
-        <div id="phase-0" class="phase-section active">
-            <div class="card">
-                <h2>📁 Archivo del Caso: #AST-2022</h2>
-                <p><strong>Agencia:</strong> Análisis Forense de Datos (AFD)<br>
-                <strong>Objetivo:</strong> Descifrar el comportamiento de ventas.<br>
-                <strong>Datos:</strong> 304 días (Ene-Oct 2022)</p>
-                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #eee;">
-                <p>Has sido asignado para investigar una serie temporal sospechosa. Tu misión es identificar:</p>
-                <ul style="margin: 1rem 0 1rem 2rem;">
-                    <li>📈 La Tendencia</li>
-                    <li>🔄 La Estacionalidad</li>
-                    <li>🚨 Las Anomalías</li>
-                </ul>
-                <button onclick="gameState.moveToPhase(1)">Iniciar Investigación 🔍</button>
-            </div>
-        </div>
-
-        <!-- FASE 1: TENDENCIA -->
-        <div id="phase-1" class="phase-section">
-            <div class="card">
-                <h2>🔎 Fase 1: Análisis de Tendencia</h2>
-                <p>Observa el gráfico. ¿Cómo se comporta la serie a largo plazo?</p>
-                
-                <div class="control-group">
-                    <label for="trend-answer">¿Cuál es la tendencia principal?</label>
-                    <select id="trend-answer">
-                        <option value="">Selecciona una opción...</option>
-                        <option value="uptrend">Creciente (Alza)</option>
-                        <option value="downtrend">Decreciente (Baja)</option>
-                        <option value="stable">Estable (Plana)</option>
-                    </select>
-                    <button onclick="validateTrendAnswer()">Enviar Hipótesis</button>
-                </div>
-
-                <div id="trend-hint" class="hint-box"></div>
-                <div id="trend-explanation" class="explanation-box">
-                    <h3>✅ ¡Correcto!</h3>
-                    <p>Las ventas muestran una clara tendencia positiva. Esto indica un crecimiento sostenido del negocio durante el año.</p>
-                    <button onclick="gameState.moveToPhase(2)" style="margin-top: 1rem;">Continuar al siguiente análisis ➡️</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- FASE 2: ESTACIONALIDAD -->
-        <div id="phase-2" class="phase-section">
-            <div class="card">
-                <h2>📅 Fase 2: Análisis de Estacionalidad</h2>
-                <p>Examina los patrones repetitivos. ¿Cada cuánto se repite el ciclo?</p>
-
-                <div class="control-group">
-                    <label for="seasonality-answer">Longitud del ciclo (en días):</label>
-                    <input type="number" id="seasonality-answer" placeholder="Ej: 30">
-                    <button onclick="validateSeasonalityAnswer()">Analizar Ciclo</button>
-                </div>
-
-                <div id="seasonality-hint" class="hint-box"></div>
-                <div id="seasonality-explanation" class="explanation-box">
-                    <h3>✅ ¡Correcto!</h3>
-                    <p>El ciclo es de <strong>7 días</strong> (Semanal). Esto es típico en retail, donde los fines de semana suelen comportarse diferente a los días laborales.</p>
-                    <button onclick="gameState.moveToPhase(3)" style="margin-top: 1rem;">Continuar al siguiente análisis ➡️</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- FASE 3: ANOMALÍAS -->
-        <div id="phase-3" class="phase-section">
-            <div class="card">
-                <h2>🚨 Fase 3: Detección de Anomalías</h2>
-                <p>Busca eventos extraños que rompan el patrón normal.</p>
-
-                <div class="control-group">
-                    <label for="anomaly-answer">¿Cuántos eventos anómalos principales detectas?</label>
-                    <input type="number" id="anomaly-answer" placeholder="Número de eventos">
-                    <button onclick="validateAnomalyAnswer()">Identificar Anomalías</button>
-                </div>
-
-                <div id="anomaly-hint" class="hint-box"></div>
-                <div id="anomaly-explanation" class="explanation-box">
-                    <h3>✅ ¡Bien visto!</h3>
-                    <p>Has detectado los eventos clave (Año Nuevo, Día del Trabajo, Halloween). Identificar estas excepciones es vital para no ensuciar las proyecciones futuras.</p>
-                    <button onclick="gameState.moveToPhase(4)" style="margin-top: 1rem;">Ver Informe Final 📊</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- FASE 4: RESOLUCIÓN -->
-        <div id="phase-4" class="phase-section">
-            <div class="card">
-                <h2>🏆 Caso Resuelto</h2>
-                <p>Excelente trabajo, Detective. Aquí está el resumen de tu investigación:</p>
-
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">Creciente 📈</div>
-                        <div class="stat-label">Tendencia</div>
+            <div class="progress-container">
+                <div class="progress-wrapper" id="progressBar">
+                    <div class="progress-line">
+                        <div class="progress-line-fill" id="progressFill"></div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">7 días 📅</div>
-                        <div class="stat-label">Estacionalidad</div>
+                    <div class="progress-step active" data-phase="0">
+                        <span>0</span>
+                        <span class="progress-step-label">Briefing</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="final-anomalies">4 🚨</div>
-                        <div class="stat-label">Anomalías Detectadas</div>
+                    <div class="progress-step" data-phase="1">
+                        <span>1</span>
+                        <span class="progress-step-label">Tendencia</span>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="final-score">100%</div>
-                        <div class="stat-label">Precisión</div>
+                    <div class="progress-step" data-phase="2">
+                        <span>2</span>
+                        <span class="progress-step-label">Estacionalidad</span>
+                    </div>
+                    <div class="progress-step" data-phase="3">
+                        <span>3</span>
+                        <span class="progress-step-label">Anomalías</span>
+                    </div>
+                    <div class="progress-step" data-phase="4">
+                        <span>4</span>
+                        <span class="progress-step-label">Resolución</span>
                     </div>
                 </div>
+            </div>
+        </header>
 
-                <div class="explanation-box" style="display: block; margin-top: 1.5rem;">
-                    <h3>🧠 Aprendizajes Clave</h3>
-                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                        <li>La <strong>inspección visual</strong> es el primer paso de todo análisis.</li>
-                        <li>Entender la <strong>estacionalidad</strong> permite optimizar inventarios.</li>
-                        <li>Las <strong>anomalías</strong> cuentan historias importantes sobre el negocio (promociones, feriados).</li>
-                    </ul>
+        <!-- ========================================
+             MAIN CONTENT
+        ======================================== -->
+        <main class="main-content">
+
+            <!-- CHART SECTION (Visible en todas las fases) -->
+            <section class="chart-section" id="chartSection">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <span>📊</span>
+                        <span id="chartTitleText">Serie Temporal: Unidades Vendidas 2022</span>
+                    </h3>
+                    <div class="chart-controls">
+                        <button id="btnZoomIn" title="Acercar">🔍+</button>
+                        <button id="btnZoomOut" title="Alejar">🔍-</button>
+                        <button id="btnResetChart" title="Restablecer">↻</button>
+                    </div>
                 </div>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                <div class="chart-legend" id="chartLegend">
+                    <span class="legend-item">
+                        <span class="legend-color" style="background: var(--primary);"></span>
+                        Datos reales
+                    </span>
+                </div>
+            </section>
 
-                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-                    <button onclick="gameState.resetGame()">Investigar Otro Caso (Reiniciar)</button>
-                    <button onclick="alert('Informe descargado (simulación)')" style="background-color: var(--secondary)">Descargar Informe 📥</button>
+            <!-- ========================================
+                 FASE 0: BRIEFING
+            ======================================== -->
+            <section id="phase-0" class="phase-section active" data-phase="0">
+                <div class="card" style="animation: slideUp 0.6s ease;">
+                    <div class="card-header">
+                        <span class="phase-badge">Briefing</span>
+                        <h2>📋 Archivo del Caso #AST-2022</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-lg">
+                            <p class="text-muted mb-sm">AGENCIA</p>
+                            <p class="mb-md"><strong>Análisis Forense de Datos (AFD)</strong></p>
+
+                            <p class="text-muted mb-sm">EMPRESA INVESTIGADA</p>
+                            <p class="mb-md"><strong>ChainMart Retail Inc.</strong></p>
+
+                            <p class="text-muted mb-sm">PERIODO DE ANÁLISIS</p>
+                            <p class="mb-md"><strong>2022-01-01 a 2022-10-31</strong> (304 días)</p>
+
+                            <p class="text-muted mb-sm">VARIABLE BAJO INVESTIGACIÓN</p>
+                            <p><strong>Unidades Vendidas Diarias (agregación todas categorías)</strong></p>
+                        </div>
+
+                        <div class="explanation-box"
+                            style="display: block; background: linear-gradient(135deg, #f0f4ff, #e8ecff); border-color: var(--primary);">
+                            <h3 style="color: var(--primary);"><span>🎯</span> Tu Misión</h3>
+                            <p>Como <strong>Detective de Series Temporales</strong>, debes analizar los datos de ventas
+                                e identificar tres componentes clave:</p>
+                            <ul style="margin: 1rem 0 0 1.5rem;">
+                                <li><strong>📈 Tendencia</strong> - Dirección general a largo plazo</li>
+                                <li><strong>🔄 Estacionalidad</strong> - Patrones que se repiten</li>
+                                <li><strong>🚨 Anomalías</strong> - Eventos inusuales</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-muted">Tiempo estimado: 10-15 minutos</div>
+                        <button class="btn btn-primary btn-lg" id="btnStartInvestigation">
+                            Iniciar Investigación 🔍
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 FASE 1: TENDENCIA
+            ======================================== -->
+            <section id="phase-1" class="phase-section" data-phase="1">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="phase-badge">Fase 1</span>
+                        <h2>📈 Análisis de Tendencia</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-lg">Observa el gráfico completo de los 304 días. <strong>¿Cuál es la dirección
+                                general de las ventas a lo largo del tiempo?</strong></p>
+
+                        <div class="form-group">
+                            <label class="form-label">Selecciona tu análisis:</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" name="trendAnswer" id="trend-uptrend" value="uptrend">
+                                    <label for="trend-uptrend">📈 Creciente (Alza)</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="trendAnswer" id="trend-downtrend" value="downtrend">
+                                    <label for="trend-downtrend">📉 Decreciente (Baja)</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" name="trendAnswer" id="trend-stable" value="stable">
+                                    <label for="trend-stable">➡️ Estable (Plano)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="trend-hints" class="hints-panel hidden">
+                            <div class="hints-header">
+                                <h4>💡 Pistas</h4>
+                                <span class="hints-counter">Usadas: <span id="trendHintCount">0</span>/3</span>
+                            </div>
+                            <div id="trend-hints-content"></div>
+                        </div>
+
+                        <div id="trend-explanation" class="explanation-box hidden">
+                            <h3>✅ ¡Excelente análisis!</h3>
+                            <p>Las ventas muestran una <strong>tendencia creciente</strong> sostenida. Esto indica un
+                                crecimiento del negocio durante el año, con un incremento aproximado de
+                                <strong>+265%</strong> desde enero hasta octubre.</p>
+                            <p class="text-muted mt-sm" style="margin-top: 0.5rem;"><em>Ecuación de regresión: y = 53.8x
+                                    + 6,543 (donde x es el día del año)</em></p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" id="btnTrendHint">
+                            💡 Pedir Pista
+                        </button>
+                        <button class="btn btn-primary" id="btnTrendSubmit">
+                            Enviar Análisis
+                        </button>
+                        <button class="btn btn-success hidden" id="btnTrendNext">
+                            Continuar ➡️
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 FASE 2: ESTACIONALIDAD
+            ======================================== -->
+            <section id="phase-2" class="phase-section" data-phase="2">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="phase-badge">Fase 2</span>
+                        <h2>🔄 Análisis de Estacionalidad</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-lg">Examina los patrones repetitivos en los datos. <strong>¿Cada cuántos días se
+                                repite el patrón de comportamiento?</strong></p>
+
+                        <div class="form-group">
+                            <label class="form-label" for="seasonalityInput">Longitud del ciclo (en días):</label>
+                            <input type="number" id="seasonalityInput" class="form-input" placeholder="Ej: 30" min="1"
+                                max="365">
+                        </div>
+
+                        <div id="seasonality-hints" class="hints-panel hidden">
+                            <div class="hints-header">
+                                <h4>💡 Pistas</h4>
+                                <span class="hints-counter">Usadas: <span id="seasonalityHintCount">0</span>/3</span>
+                            </div>
+                            <div id="seasonality-hints-content"></div>
+                        </div>
+
+                        <div id="seasonality-explanation" class="explanation-box hidden">
+                            <h3>✅ ¡Patrón identificado!</h3>
+                            <p>El ciclo es de <strong>7 días</strong> (semanal). Esto es típico en retail donde los
+                                comportamientos de compra varían según el día de la semana:</p>
+                            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                                <li><strong>🔝 Sábado:</strong> Mayor actividad (~16,100 unidades promedio)</li>
+                                <li><strong>🔻 Domingo:</strong> Menor actividad (~14,200 unidades promedio)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" id="btnSeasonalityHint">
+                            💡 Pedir Pista
+                        </button>
+                        <button class="btn btn-primary" id="btnSeasonalitySubmit">
+                            Analizar Ciclo
+                        </button>
+                        <button class="btn btn-success hidden" id="btnSeasonalityNext">
+                            Continuar ➡️
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 FASE 3: ANOMALÍAS
+            ======================================== -->
+            <section id="phase-3" class="phase-section" data-phase="3">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="phase-badge">Fase 3</span>
+                        <h2>🚨 Detección de Anomalías</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-lg">Busca eventos anómalos que rompan el patrón normal. <strong>¿Cuántos eventos
+                                especiales o anómalos principales detectas?</strong></p>
+
+                        <div class="form-group">
+                            <label class="form-label" for="anomalyInput">Número de anomalías detectadas:</label>
+                            <input type="number" id="anomalyInput" class="form-input" placeholder="Ej: 5" min="0"
+                                max="50">
+                        </div>
+
+                        <div id="anomaly-hints" class="hints-panel hidden">
+                            <div class="hints-header">
+                                <h4>💡 Pistas</h4>
+                                <span class="hints-counter">Usadas: <span id="anomalyHintCount">0</span>/3</span>
+                            </div>
+                            <div id="anomaly-hints-content"></div>
+                        </div>
+
+                        <div id="anomaly-explanation" class="explanation-box hidden">
+                            <h3>✅ ¡Bien visto, detective!</h3>
+                            <p>Has identificado correctamente los eventos anómalos clave:</p>
+                            <ul style="margin: 0.5rem 0 0 1.5rem;">
+                                <li><strong>🎆 1 de Enero:</strong> Año Nuevo (-58%, cierre de tienda)</li>
+                                <li><strong>🛠️ 1-2 de Mayo:</strong> Día del Trabajo (-11% a -12%)</li>
+                                <li><strong>🎃 31 de Octubre:</strong> Halloween (+50%, promoción especial)</li>
+                            </ul>
+                            <p class="text-muted" style="margin-top: 0.5rem;"><em>Identificar anomalías es crucial para
+                                    no contaminar modelos predictivos.</em></p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" id="btnAnomalyHint">
+                            💡 Pedir Pista
+                        </button>
+                        <button class="btn btn-primary" id="btnAnomalySubmit">
+                            Identificar Anomalías
+                        </button>
+                        <button class="btn btn-success hidden" id="btnAnomalyNext">
+                            Ver Informe Final 📊
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================
+                 FASE 4: RESOLUCIÓN
+            ======================================== -->
+            <section id="phase-4" class="phase-section" data-phase="4">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="phase-badge"
+                            style="background: linear-gradient(135deg, #4ade80, #22c55e);">Completado</span>
+                        <h2>🏆 Caso Resuelto</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-lg text-center" style="font-size: 1.125rem;">¡Excelente trabajo, Detective! Has
+                            completado el análisis forense de la serie temporal.</p>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">📈</div>
+                                <div class="stat-label">Tendencia</div>
+                                <div class="stat-value">Creciente</div>
+                                <div class="stat-detail">+265% en 10 meses</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🔄</div>
+                                <div class="stat-label">Estacionalidad</div>
+                                <div class="stat-value">7 días</div>
+                                <div class="stat-detail">Patrón semanal</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🚨</div>
+                                <div class="stat-label">Anomalías</div>
+                                <div class="stat-value" id="finalAnomalies">4</div>
+                                <div class="stat-detail">Eventos detectados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⭐</div>
+                                <div class="stat-label">Puntuación</div>
+                                <div class="stat-value" id="finalScore">0</div>
+                                <div class="stat-detail" id="finalScoreDetail">pts</div>
+                            </div>
+                        </div>
+
+                        <div class="insights-section">
+                            <h3>📊 Hallazgos Clave del Caso</h3>
+                            <ul class="insights-list">
+                                <li>
+                                    <span class="insight-icon">✓</span>
+                                    <span>Crecimiento sostenido de ventas durante todo el período analizado</span>
+                                </li>
+                                <li>
+                                    <span class="insight-icon">✓</span>
+                                    <span>Patrón semanal predecible: mayor actividad los sábados, menor los
+                                        domingos</span>
+                                </li>
+                                <li>
+                                    <span class="insight-icon">✓</span>
+                                    <span>Eventos anómalos correlacionados con festividades y promociones</span>
+                                </li>
+                                <li>
+                                    <span class="insight-icon">✓</span>
+                                    <span>Datos limpios para modelado predictivo (excluyendo anomalías)</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div id="achievements-section" class="explanation-box hidden"
+                            style="display: block; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
+                            <h3 style="color: #b45309;">🏅 Logros Desbloqueados</h3>
+                            <div id="achievements-list"
+                                style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-secondary" id="btnRestart">
+                            🔄 Investigar Otro Caso
+                        </button>
+                        <button class="btn btn-primary" id="btnDownloadReport">
+                            📥 Descargar Informe
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- ========================================
+             SCORE BAR
+        ======================================== -->
+        <div class="score-bar" id="scoreBar">
+            <div class="score-item">
+                <span>⏱️</span>
+                <span>Tiempo:</span>
+                <span class="score-item-value" id="scoreTime">0:00</span>
+            </div>
+            <div class="score-item">
+                <span>⭐</span>
+                <span>Puntuación:</span>
+                <span class="score-item-value" id="scorePoints">0</span>
+            </div>
+            <div class="score-item">
+                <span>💡</span>
+                <span>Pistas:</span>
+                <span class="score-item-value" id="scoreHints">0/9</span>
+            </div>
+        </div>
+
+        <!-- ========================================
+             MODAL FEEDBACK
+        ======================================== -->
+        <div class="modal" id="feedbackModal">
+            <div class="modal-backdrop" id="modalBackdrop"></div>
+            <div class="modal-content">
+                <div class="modal-icon" id="modalIcon">✅</div>
+                <h3 id="modalTitle">¡Correcto!</h3>
+                <p id="modalMessage">Has identificado el patrón correctamente.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="btnModalClose">Continuar</button>
                 </div>
             </div>
         </div>
 
-    </main>
+    </div>
 
+    <!-- ========================================
+         SCRIPTS (CDN)
+    ======================================== -->
+    <!-- Chart.js 4.4 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Chart.js Annotation Plugin -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- Anime.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+    <!-- Numeral.js -->
+    <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
+
+    <!-- Game Logic -->
     <script src="game-logic.js"></script>
 </body>
+
 </html>
