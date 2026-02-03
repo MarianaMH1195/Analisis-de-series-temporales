@@ -6,6 +6,11 @@
    CSS VARIABLES
 ======================================== */
 :root {
+    /* RemixIcon Integration */
+    --icon-size-sm: 1.25rem;
+    --icon-size-md: 1.5rem;
+    --icon-size-lg: 2rem;
+    --icon-size-xl: 3rem;
     /* Primary Colors */
     --primary: #667eea;
     --primary-light: #8b9eff;
@@ -173,7 +178,9 @@ body {
 }
 
 .logo-icon {
-    font-size: 2rem;
+    font-size: var(--icon-size-md);
+    display: flex;
+    align-items: center;
     animation: pulse 2s infinite;
 }
 
@@ -196,19 +203,30 @@ body {
     gap: var(--spacing-sm);
 }
 
+/* Universal Icon Style */
+i.ri- {
+    vertical-align: middle;
+    line-height: 1;
+}
+
 .btn-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-full);
-    border: none;
     background: rgba(255, 255, 255, 0.15);
-    color: white;
-    font-size: 1.25rem;
+    /* Kept original background */
+    border: none;
+    font-size: var(--icon-size-md);
     cursor: pointer;
-    transition: var(--transition-base);
+    padding: var(--spacing-sm);
+    /* Added padding */
+    border-radius: var(--radius-full);
+    /* Kept original radius */
+    transition: all 0.2s ease;
+    /* Updated transition */
     display: flex;
+    /* Better alignment */
     align-items: center;
     justify-content: center;
+    color: white;
+    /* Kept original color */
 }
 
 .btn-icon:hover {

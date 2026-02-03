@@ -14,8 +14,11 @@
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 
+    <!-- RemixIcon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css?v=3.1">
+    <link rel="stylesheet" href="styles.css?v=3.2">
 </head>
 
 <body>
@@ -26,15 +29,16 @@
         <header class="app-header">
             <div class="header-content">
                 <div class="logo">
-                    <span class="logo-icon">🔍</span>
+                    <span class="logo-icon"><i class="ri-spy-line"></i></span>
                     <span class="logo-text">Detective de Datos</span>
                     <span class="logo-subtitle">Caso Retail 2022</span>
                 </div>
                 <nav class="header-nav">
 
-                    <button class="btn-icon" id="btnTutorial" title="Cómo Jugar" aria-label="Ver tutorial">❓</button>
-                    <button class="btn-icon" id="btnSettings" title="Configuración"
-                        aria-label="Configuración">⚙️</button>
+                    <button class="btn-icon" id="btnTutorial" title="Cómo Jugar" aria-label="Ver tutorial"><i
+                            class="ri-question-line"></i></button>
+                    <button class="btn-icon" id="btnSettings" title="Configuración" aria-label="Configuración"><i
+                            class="ri-settings-3-line"></i></button>
                 </nav>
             </div>
         </header>
@@ -53,7 +57,7 @@
                 <!-- Player Stats Header -->
                 <div class="player-stats-bar">
                     <div class="player-rank">
-                        <div class="rank-icon" id="rankIcon">🌱</div>
+                        <div class="rank-icon" id="rankIcon"><i class="ri-medal-line"></i></div>
                         <div class="rank-info">
                             <h3>Rango Actual</h3>
                             <div class="rank-name" id="currentRank">Novato</div>
@@ -84,7 +88,7 @@
 
                 <!-- Achievements Section -->
                 <div class="achievements-section">
-                    <h3>🏅 Medallas y Logros</h3>
+                    <h3><i class="ri-trophy-line"></i> Medallas y Logros</h3>
                     <div class="achievements-container" id="achievementsContainer">
                         <!-- Injected by JS -->
                     </div>
@@ -98,7 +102,7 @@
                 <!-- Mission Header -->
                 <div class="mission-play-header">
                     <button class="btn btn-secondary btn-sm" id="btnBackToMissions">
-                        ← Volver
+                        <i class="ri-arrow-left-line"></i> Volver
                     </button>
                     <div class="mission-play-title-group" style="flex: 1; margin-left: 1rem;">
                         <h1 id="missionPlayTitle">Título Misión</h1>
@@ -106,13 +110,13 @@
                     </div>
                     <div class="mission-play-meta">
                         <span class="mission-difficulty" id="missionPlayDifficulty">⭐⭐</span>
-                        <span class="mission-icon" id="missionPlayIcon">📦</span>
+                        <span class="mission-icon" id="missionPlayIcon"><i class="ri-file-search-line"></i></span>
                     </div>
                 </div>
 
                 <!-- Narrative Section -->
                 <div class="mission-narrative">
-                    <h3>📁 Briefing de la Misión</h3>
+                    <h3><i class="ri-file-text-line"></i> Briefing de la Misión</h3>
                     <p id="missionNarrative">...</p>
 
                     <div class="mission-objectives mt-md">
@@ -125,13 +129,13 @@
                 <section class="chart-section mb-xl">
                     <div class="chart-header">
                         <h3 class="chart-title">
-                            <span>📊</span>
+                            <span><i class="ri-bar-chart-box-line"></i></span>
                             <span id="chartTitleText">Datos del Caso</span>
                         </h3>
                         <div class="chart-controls">
-                            <button id="btnZoomIn" title="Acercar">🔍+</button>
-                            <button id="btnZoomOut" title="Alejar">🔍-</button>
-                            <button id="btnResetChart" title="Restablecer">↻</button>
+                            <button id="btnZoomIn" title="Acercar"><i class="ri-zoom-in-line"></i></button>
+                            <button id="btnZoomOut" title="Alejar"><i class="ri-zoom-out-line"></i></button>
+                            <button id="btnResetChart" title="Restablecer"><i class="ri-refresh-line"></i></button>
                         </div>
                     </div>
                     <div class="mission-chart-container">
@@ -152,10 +156,10 @@
                 <div class="mission-footer mt-xl text-center">
                     <button class="btn btn-secondary" id="btnRecapNarrative"
                         onclick="document.querySelector('.mission-narrative').scrollIntoView({behavior: 'smooth'})">
-                        📜 Ver Briefing
+                        <i class="ri-file-list-line"></i> Ver Briefing
                     </button>
                     <button class="btn btn-secondary" id="btnSandboxModeInline">
-                        🧪 Abrir Sandbox
+                        <i class="ri-flask-line"></i> Abrir Sandbox
                     </button>
                 </div>
             </div>
@@ -170,7 +174,7 @@
         <div class="modal" id="feedbackModal">
             <div class="modal-backdrop" id="modalBackdrop"></div>
             <div class="modal-content">
-                <div class="modal-icon" id="modalIcon">✅</div>
+                <div class="modal-icon" id="modalIcon"><i class="ri-checkbox-circle-line"></i></div>
                 <h3 id="modalTitle">¡Correcto!</h3>
                 <p id="modalMessage">Has identificado el patrón correctamente.</p>
                 <div class="modal-actions">
@@ -185,7 +189,7 @@
         <div class="modal" id="nameModal">
             <div class="modal-backdrop"></div>
             <div class="modal-content">
-                <div class="modal-icon">🎉</div>
+                <div class="modal-icon"><i class="ri-cup-line"></i></div>
                 <h3>¡Felicidades!</h3>
                 <p>Has completado el caso. Ingresa tu nombre para el ranking:</p>
                 <div class="form-group" style="text-align: left;">
@@ -205,7 +209,7 @@
         <div class="modal mission-complete-modal" id="missionCompleteModal">
             <div class="modal-backdrop"></div>
             <div class="modal-content">
-                <div class="complete-celebration">🎉</div>
+                <div class="complete-celebration"><i class="ri-confetti-line"></i></div>
                 <h2 id="completeMissionTitle">Misión Completada</h2>
 
                 <div class="complete-xp">
@@ -221,14 +225,16 @@
                 </div>
 
                 <div class="complete-achievement">
-                    <div class="complete-achievement-icon" id="completeAchievementIcon">🏅</div>
+                    <div class="complete-achievement-icon" id="completeAchievementIcon"><i class="ri-medal-2-fill"></i>
+                    </div>
                     <h3 class="complete-achievement-name" id="completeAchievementName">Logro</h3>
                     <p class="complete-achievement-desc" id="completeAchievementDesc">Descripción</p>
                 </div>
 
                 <div class="complete-actions">
                     <button class="btn btn-secondary" id="btnMissionCompleteClose">Cerrar</button>
-                    <button class="btn btn-primary" id="btnNextMission">Siguiente Misión →</button>
+                    <button class="btn btn-primary" id="btnNextMission">Siguiente Misión <i
+                            class="ri-arrow-right-line"></i></button>
                 </div>
             </div>
         </div>
@@ -239,7 +245,7 @@
         <div class="modal" id="sandboxModal">
             <div class="modal-backdrop" id="sandboxBackdrop"></div>
             <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
-                <div class="modal-icon">🧪</div>
+                <div class="modal-icon"><i class="ri-flask-line"></i></div>
                 <h3>Modo Sandbox</h3>
                 <p class="mb-lg">Explora los datos libremente sin restricciones del juego.</p>
 
@@ -288,22 +294,22 @@
                     <!-- Stats Display -->
                     <div id="sandboxStats" class="stats-grid" style="margin: 1.5rem 0;">
                         <div class="stat-card">
-                            <div class="stat-icon">📊</div>
+                            <div class="stat-icon"><i class="ri-bar-chart-fill"></i></div>
                             <div class="stat-label">Media</div>
                             <div class="stat-value" id="sandboxMean">--</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon">📈</div>
+                            <div class="stat-icon"><i class="ri-arrow-up-circle-line"></i></div>
                             <div class="stat-label">Máximo</div>
                             <div class="stat-value" id="sandboxMax">--</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon">📉</div>
+                            <div class="stat-icon"><i class="ri-arrow-down-circle-line"></i></div>
                             <div class="stat-label">Mínimo</div>
                             <div class="stat-value" id="sandboxMin">--</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-icon">📐</div>
+                            <div class="stat-icon"><i class="ri-function-line"></i></div>
                             <div class="stat-label">Desv. Estándar</div>
                             <div class="stat-value" id="sandboxStd">--</div>
                         </div>
@@ -325,7 +331,7 @@
         <div class="modal" id="tutorialModal">
             <div class="modal-backdrop" id="tutorialBackdrop"></div>
             <div class="modal-content" style="max-width: 700px;">
-                <div class="modal-icon">🕵️</div>
+                <div class="modal-icon"><i class="ri-spy-fill"></i></div>
                 <h3>Cómo Jugar</h3>
 
                 <div class="tutorial-steps">
@@ -364,7 +370,7 @@
         <div class="modal" id="settingsModal">
             <div class="modal-backdrop" id="settingsBackdrop"></div>
             <div class="modal-content" style="max-width: 500px;">
-                <div class="modal-icon">⚙️</div>
+                <div class="modal-icon"><i class="ri-settings-4-line"></i></div>
                 <h3>Configuración</h3>
 
                 <div class="settings-group">
@@ -394,7 +400,7 @@
                 <div class="settings-danger-zone">
                     <h4>Zona de Peligro</h4>
                     <button class="btn btn-danger-outline" id="btnResetProgress">
-                        ⚠️ Reiniciar Todo el Progreso
+                        <i class="ri-error-warning-line"></i> Reiniciar Todo el Progreso
                     </button>
                     <p class="text-xs text-muted mt-sm">Esta acción no se puede deshacer.</p>
                 </div>

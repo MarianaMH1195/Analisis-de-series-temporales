@@ -12,11 +12,11 @@ const missionsData = [
         title: "El Caso Retail 2022",
         subtitle: "Investigación de Tendencia",
         difficulty: 1,
-        stars: "⭐",
+        stars: "<i class='ri-star-fill'></i>",
         duration: "3-5 min",
         xpReward: 100,
         dataset: 'retail',
-        icon: "📦",
+        icon: "<i class='ri-archive-line'></i>",
 
         narrative: `Eres analista junior en ChainMart Retail Inc. Tu primer caso: investigar las ventas de 2022. ¿Qué dirección general muestran los datos?`,
 
@@ -54,9 +54,11 @@ const missionsData = [
         },
 
         reward: {
-            achievement: "🔍 Primer Caso",
-            achievementDesc: "Has completado tu primera investigación",
-            unlock: 2
+            reward: {
+                achievement: "🔍 Primer Caso",
+                achievementDesc: "Has completado tu primera investigación",
+                unlock: 2
+            }
         }
     },
 
@@ -68,11 +70,11 @@ const missionsData = [
         title: "El Patrón Semanal",
         subtitle: "Estacionalidad Detectada",
         difficulty: 2,
-        stars: "⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "3-5 min",
         xpReward: 150,
         dataset: 'retail',
-        icon: "🔄",
+        icon: "<i class='ri-refresh-line'></i>",
 
         narrative: `Los datos muestran un patrón recurrente. ¿Cada cuántos días se repite el comportamiento? Pista: Piensa en cómo varía el comportamiento de compra durante la semana.`,
 
@@ -139,11 +141,11 @@ const missionsData = [
         title: "Eventos Especiales",
         subtitle: "Anomalías en el Dataset",
         difficulty: 2,
-        stars: "⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "4-6 min",
         xpReward: 150,
         dataset: 'retail',
-        icon: "🚨",
+        icon: "<i class='ri-alarm-warning-line'></i>",
 
         narrative: `Algunos días los datos se desviaron significativamente del patrón normal. ¿Cuántos eventos anómalos puedes identificar? Busca desviaciones de más del 15% del patrón normal.`,
 
@@ -213,11 +215,11 @@ const missionsData = [
         title: "Caso SaaS",
         subtitle: "Usuarios Activos Mensuales",
         difficulty: 3,
-        stars: "⭐⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "5-7 min",
         xpReward: 200,
         dataset: 'saas',
-        icon: "💻",
+        icon: "<i class='ri-computer-line'></i>",
 
         narrative: `Ascenso rápido. Nuevo caso: ProductAPI Inc. Analiza el crecimiento de usuarios activos (MAU) durante 2023. Este es un contexto diferente al retail. ¿Qué patrones ves?`,
 
@@ -301,11 +303,11 @@ const missionsData = [
         title: "Tráfico E-commerce",
         subtitle: "Caso de Alta Volatilidad",
         difficulty: 3,
-        stars: "⭐⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "6-8 min",
         xpReward: 250,
         dataset: 'ecommerce',
-        icon: "🛒",
+        icon: "<i class='ri-shopping-cart-2-line'></i>",
 
         narrative: `Nuevo desafío: ShopHub Inc., plataforma e-commerce. Analiza el tráfico web diario. ⚠️ Advertencia: Este dataset es MUCHO más volátil. Habrá picos y caídas. ¿Puedes identificar los patrones?`,
 
@@ -391,11 +393,11 @@ const missionsData = [
         title: "Predicción Avanzada",
         subtitle: "Forecasting de Ventas",
         difficulty: 4,
-        stars: "⭐⭐⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "8-10 min",
         xpReward: 300,
         dataset: 'retail',
-        icon: "🔮",
+        icon: "<i class='ri-magic-line'></i>",
 
         narrative: `Próxima etapa: predicción. Usando el caso Retail 2022, predice las ventas de noviembre y diciembre. No es adivinación - usa los patrones que identificaste: tendencia creciente, estacionalidad semanal, eventos especiales.`,
 
@@ -476,11 +478,11 @@ const missionsData = [
         title: "Análisis Estratégico",
         subtitle: "Caso Capstone Final",
         difficulty: 5,
-        stars: "⭐⭐⭐⭐⭐",
+        stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "10-12 min",
         xpReward: 500,
         dataset: 'retail',
-        icon: "🎓",
+        icon: "<i class='ri-graduation-cap-line'></i>",
 
         narrative: `Última misión de rango junior. Has dominado: tendencia, estacionalidad, anomalías, volatilidad, forecasting. Ahora: análisis estratégico COMPLETO. Toma decisiones de negocio basadas en datos. Esto determina si asciendes a Analista Senior.`,
 
@@ -580,13 +582,13 @@ const missionsData = [
 // ============================================================
 
 const achievements = [
-    { id: 1, icon: "🔍", name: "Primer Caso", desc: "Completa tu primera investigación", mission: 1 },
-    { id: 2, icon: "🔄", name: "Patrón Identificado", desc: "Domina la estacionalidad", mission: 2 },
-    { id: 3, icon: "🚨", name: "Cazador de Anomalías", desc: "Detecta lo que otros no ven", mission: 3 },
-    { id: 4, icon: "💻", name: "Analista SaaS", desc: "Dominas múltiples contextos", mission: 4 },
-    { id: 5, icon: "📊", name: "Experto en Volatilidad", desc: "Separas señal de ruido", mission: 5 },
-    { id: 6, icon: "🔮", name: "Profeta de Datos", desc: "Predices el futuro con datos", mission: 6 },
-    { id: 7, icon: "🎓", name: "Ascenso a Senior", desc: "Maestro del análisis temporal", mission: 7 }
+    { id: 1, icon: "<i class='ri-search-eye-line'></i>", name: "Primer Caso", desc: "Completa tu primera investigación", mission: 1 },
+    { id: 2, icon: "<i class='ri-refresh-line'></i>", name: "Patrón Identificado", desc: "Domina la estacionalidad", mission: 2 },
+    { id: 3, icon: "<i class='ri-alarm-warning-line'></i>", name: "Cazador de Anomalías", desc: "Detecta lo que otros no ven", mission: 3 },
+    { id: 4, icon: "<i class='ri-computer-line'></i>", name: "Analista SaaS", desc: "Dominas múltiples contextos", mission: 4 },
+    { id: 5, icon: "<i class='ri-bar-chart-2-line'></i>", name: "Experto en Volatilidad", desc: "Separas señal de ruido", mission: 5 },
+    { id: 6, icon: "<i class='ri-magic-line'></i>", name: "Profeta de Datos", desc: "Predices el futuro con datos", mission: 6 },
+    { id: 7, icon: "<i class='ri-graduation-cap-line'></i>", name: "Ascenso a Senior", desc: "Maestro del análisis temporal", mission: 7 }
 ];
 
 // ============================================================
@@ -594,12 +596,12 @@ const achievements = [
 // ============================================================
 
 const ranks = [
-    { level: 0, name: "Novato", minXP: 0, icon: "🌱" },
-    { level: 1, name: "Junior Analyst", minXP: 100, icon: "📊" },
-    { level: 2, name: "Analyst", minXP: 400, icon: "📈" },
-    { level: 3, name: "Senior Analyst", minXP: 850, icon: "🎯" },
-    { level: 4, name: "Expert", minXP: 1350, icon: "⭐" },
-    { level: 5, name: "Master Detective", minXP: 1650, icon: "🏆" }
+    { level: 0, name: "Novato", minXP: 0, icon: "<i class='ri-seedling-line'></i>" },
+    { level: 1, name: "Junior Analyst", minXP: 100, icon: "<i class='ri-bar-chart-line'></i>" },
+    { level: 2, name: "Analyst", minXP: 400, icon: "<i class='ri-line-chart-line'></i>" },
+    { level: 3, name: "Senior Analyst", minXP: 850, icon: "<i class='ri-pie-chart-line'></i>" },
+    { level: 4, name: "Expert", minXP: 1350, icon: "<i class='ri-star-line'></i>" },
+    { level: 5, name: "Master Detective", minXP: 1650, icon: "<i class='ri-trophy-line'></i>" }
 ];
 
 const TOTAL_XP = 1650; // Suma de todas las misiones

@@ -203,7 +203,8 @@ class SandboxManager {
 
         if (this.chart) this.chart.destroy();
 
-        const data = this.getFilteredData();
+        if (this.rankEl) this.rankEl.innerHTML = '<i class="ri-seedling-line"></i>';
+        if (this.rankNameEl) this.rankNameEl.textContent = 'Novato';
         const type = document.getElementById('sandboxChartType').value;
         const showTrend = document.getElementById('sandboxShowTrend').checked;
         const showMA = document.getElementById('sandboxShowMovingAvg').checked;
@@ -309,7 +310,8 @@ class UIController {
         document.getElementById('btnSound')?.addEventListener('click', (e) => {
             const enabled = soundManager.toggle();
             e.currentTarget.classList.toggle('active', enabled);
-            e.currentTarget.textContent = enabled ? '🔊' : '🔇';
+            e.currentTarget.classList.toggle('active', enabled);
+            e.currentTarget.innerHTML = enabled ? '<i class="ri-volume-up-line"></i>' : '<i class="ri-volume-mute-line"></i>';
         });
 
         // Dark Mode
