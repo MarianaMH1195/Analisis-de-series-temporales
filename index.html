@@ -199,6 +199,10 @@
             transform: scale(1.1);
         }
 
+        .btn-icon.active {
+            background: rgba(74, 222, 128, 0.6);
+        }
+
         /* Progress Bar */
         .progress-container {
             max-width: 1200px;
@@ -1082,6 +1086,10 @@
                     <span class="logo-subtitle">Caso Retail 2022</span>
                 </div>
                 <nav class="header-nav">
+                    <button class="btn-icon" id="btnLeaderboard" title="Clasificación"
+                        aria-label="Ver clasificación">🏆</button>
+                    <button class="btn-icon active" id="btnSound" title="Sonido"
+                        aria-label="Alternar sonido">🔊</button>
                     <button class="btn-icon" id="btnTutorial" title="Tutorial" aria-label="Ver tutorial">❓</button>
                     <button class="btn-icon" id="btnSettings" title="Configuración"
                         aria-label="Configuración">⚙️</button>
@@ -1233,7 +1241,8 @@
                             <h3>✅ ¡Excelente análisis!</h3>
                             <p>Las ventas muestran una <strong>tendencia creciente</strong> sostenida. Esto indica un
                                 crecimiento del negocio durante el año, con un incremento aproximado de
-                                <strong>+265%</strong> desde enero hasta octubre.</p>
+                                <strong>+265%</strong> desde enero hasta octubre.
+                            </p>
                             <p class="text-muted mt-sm" style="margin-top: 0.5rem;"><em>Ecuación de regresión: y = 53.8x
                                     + 6,543 (donde x es el día del año)</em></p>
                         </div>
@@ -1431,8 +1440,11 @@
                         <button class="btn btn-secondary" id="btnRestart">
                             🔄 Investigar Otro Caso
                         </button>
+                        <button class="btn btn-secondary" id="btnViewLeaderboard">
+                            🏆 Ver Ranking
+                        </button>
                         <button class="btn btn-primary" id="btnDownloadReport">
-                            📥 Descargar Informe
+                            📥 Descargar Informe PDF
                         </button>
                     </div>
                 </div>
@@ -1476,6 +1488,58 @@
             </div>
         </div>
 
+        <!-- ========================================
+             LEADERBOARD MODAL
+        ======================================== -->
+        <div class="modal" id="leaderboardModal">
+            <div class="modal-backdrop" id="leaderboardBackdrop"></div>
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-icon">🏆</div>
+                <h3>Tabla de Clasificación</h3>
+                <div id="leaderboardContent" style="text-align: left; margin: 1rem 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--primary);">
+                                <th style="padding: 0.75rem; text-align: center;">#</th>
+                                <th style="padding: 0.75rem; text-align: left;">Nombre</th>
+                                <th style="padding: 0.75rem; text-align: center;">Puntos</th>
+                                <th style="padding: 0.75rem; text-align: center;">Tiempo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                    <p id="leaderboardEmpty" class="text-muted text-center" style="margin-top: 1rem;">No hay
+                        puntuaciones guardadas aún.</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btnClearLeaderboard">🗑️ Limpiar</button>
+                    <button class="btn btn-primary" id="btnCloseLeaderboard">Cerrar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             NAME INPUT MODAL
+        ======================================== -->
+        <div class="modal" id="nameModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-icon">🎉</div>
+                <h3>¡Felicidades!</h3>
+                <p>Has completado el caso. Ingresa tu nombre para el ranking:</p>
+                <div class="form-group" style="text-align: left;">
+                    <input type="text" id="playerNameInput" class="form-input" placeholder="Tu nombre..."
+                        maxlength="20">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btnSkipName">Omitir</button>
+                    <button class="btn btn-primary" id="btnSaveName">Guardar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- ========================================
@@ -1492,6 +1556,8 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
     <!-- Numeral.js -->
     <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
+    <!-- jsPDF for PDF export -->
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
     <!-- Game Logic -->
     <script src="game-logic.js"></script>
