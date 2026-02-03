@@ -31,43 +31,12 @@
                     <span class="logo-subtitle">Caso Retail 2022</span>
                 </div>
                 <nav class="header-nav">
-                    <button class="btn-icon" id="btnLeaderboard" title="Clasificación"
-                        aria-label="Ver clasificación">🏆</button>
-                    <button class="btn-icon active" id="btnSound" title="Sonido"
-                        aria-label="Alternar sonido">🔊</button>
-                    <button class="btn-icon" id="btnDarkMode" title="Modo Oscuro"
-                        aria-label="Alternar modo oscuro">🌙</button>
-                    <button class="btn-icon" id="btnTutorial" title="Tutorial" aria-label="Ver tutorial">❓</button>
+                    <button class="btn-icon" id="btnLeaderboard" title="Mis Expedientes"
+                        aria-label="Ver historial">📂</button>
+                    <button class="btn-icon" id="btnTutorial" title="Cómo Jugar" aria-label="Ver tutorial">❓</button>
                     <button class="btn-icon" id="btnSettings" title="Configuración"
                         aria-label="Configuración">⚙️</button>
                 </nav>
-            </div>
-            <div class="progress-container">
-                <div class="progress-wrapper" id="progressBar">
-                    <div class="progress-line">
-                        <div class="progress-line-fill" id="progressFill"></div>
-                    </div>
-                    <div class="progress-step active" data-phase="0">
-                        <span>0</span>
-                        <span class="progress-step-label">Briefing</span>
-                    </div>
-                    <div class="progress-step" data-phase="1">
-                        <span>1</span>
-                        <span class="progress-step-label">Tendencia</span>
-                    </div>
-                    <div class="progress-step" data-phase="2">
-                        <span>2</span>
-                        <span class="progress-step-label">Estacionalidad</span>
-                    </div>
-                    <div class="progress-step" data-phase="3">
-                        <span>3</span>
-                        <span class="progress-step-label">Anomalías</span>
-                    </div>
-                    <div class="progress-step" data-phase="4">
-                        <span>4</span>
-                        <span class="progress-step-label">Resolución</span>
-                    </div>
-                </div>
             </div>
         </header>
 
@@ -192,26 +161,7 @@
 
         </main>
 
-        <!-- ========================================
-             SCORE BAR
-        ======================================== -->
-        <div class="score-bar" id="scoreBar">
-            <div class="score-item">
-                <span>⏱️</span>
-                <span>Tiempo:</span>
-                <span class="score-item-value" id="scoreTime">0:00</span>
-            </div>
-            <div class="score-item">
-                <span>⭐</span>
-                <span>Puntuación:</span>
-                <span class="score-item-value" id="scorePoints">0</span>
-            </div>
-            <div class="score-item">
-                <span>💡</span>
-                <span>Pistas:</span>
-                <span class="score-item-value" id="scoreHints">0/9</span>
-            </div>
-        </div>
+
 
         <!-- ========================================
              MODAL FEEDBACK
@@ -234,14 +184,14 @@
         <div class="modal" id="leaderboardModal">
             <div class="modal-backdrop" id="leaderboardBackdrop"></div>
             <div class="modal-content" style="max-width: 600px;">
-                <div class="modal-icon">🏆</div>
-                <h3>Tabla de Clasificación</h3>
+
+                <h3>Historial de Expedientes</h3>
                 <div id="leaderboardContent" style="text-align: left; margin: 1rem 0;">
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
                             <tr style="border-bottom: 2px solid var(--primary);">
                                 <th style="padding: 0.75rem; text-align: center;">#</th>
-                                <th style="padding: 0.75rem; text-align: left;">Nombre</th>
+                                <th style="padding: 0.75rem; text-align: left;">Detective</th>
                                 <th style="padding: 0.75rem; text-align: center;">Puntos</th>
                                 <th style="padding: 0.75rem; text-align: center;">Tiempo</th>
                             </tr>
@@ -397,9 +347,91 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+        <!-- ========================================
+             TUTORIAL MODAL
+        ======================================== -->
+        <div class="modal" id="tutorialModal">
+            <div class="modal-backdrop" id="tutorialBackdrop"></div>
+            <div class="modal-content" style="max-width: 700px;">
+                <div class="modal-icon">🕵️</div>
+                <h3>Cómo Jugar</h3>
+
+                <div class="tutorial-steps">
+                    <div class="tutorial-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Analiza el Caso</h4>
+                            <p>Lee atentamente el briefing y observa los gráficos de datos reales.</p>
+                        </div>
+                    </div>
+                    <div class="tutorial-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Responde las Preguntas</h4>
+                            <p>Usa las herramientas de visualización para encontrar las respuestas correctas.</p>
+                        </div>
+                    </div>
+                    <div class="tutorial-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Sube de Rango</h4>
+                            <p>Gana XP completando misiones y desbloquea nuevos desafíos más difíciles.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-actions">
-                    <button class="btn btn-secondary" id="btnExportSandboxData">📥 Exportar CSV</button>
-                    <button class="btn btn-primary" id="btnCloseSandbox">Cerrar</button>
+                    <button class="btn btn-primary" id="btnCloseTutorial">¡Entendido!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             SETTINGS MODAL
+        ======================================== -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-backdrop" id="settingsBackdrop"></div>
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-icon">⚙️</div>
+                <h3>Configuración</h3>
+
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Sonido</h4>
+                            <p>Efectos de sonido y música</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingSoundToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h4>Modo Oscuro</h4>
+                            <p>Interfaz oscura para descanso visual</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="settingDarkModeToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-danger-zone">
+                    <h4>Zona de Peligro</h4>
+                    <button class="btn btn-danger-outline" id="btnResetProgress">
+                        ⚠️ Reiniciar Todo el Progreso
+                    </button>
+                    <p class="text-xs text-muted mt-sm">Esta acción no se puede deshacer.</p>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="btnCloseSettings">Guardar y Cerrar</button>
                 </div>
             </div>
         </div>

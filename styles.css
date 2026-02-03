@@ -822,10 +822,30 @@ body {
     font-size: 0.875rem;
 }
 
-.score-item-value {
-    font-weight: 700;
-    color: var(--primary);
-    font-family: var(--font-mono);
+
+
+.settings-danger-zone h4 {
+    color: #ef4444;
+    margin-bottom: 1rem;
+}
+
+.btn-danger-outline {
+    background: transparent;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+}
+
+.btn-danger-outline:hover {
+    background: #fef2f2;
+}
+
+[data-theme="dark"] .btn-danger-outline:hover {
+    background: #450a0a;
 }
 
 /* ========================================
@@ -1156,6 +1176,59 @@ body {
     color: #c7d2fe !important;
 }
 
+/* New Feedback Classes to replace inline styles */
+.feedback-correct {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+    border-color: #22c55e !important;
+}
+
+.feedback-correct h4 {
+    color: #065f46;
+}
+
+.feedback-correct p {
+    color: #064e3b;
+}
+
+.feedback-incorrect {
+    background: linear-gradient(135deg, #fef2f2, #fecaca) !important;
+    border-color: #ef4444 !important;
+}
+
+.feedback-incorrect h4 {
+    color: #991b1b;
+}
+
+.feedback-incorrect p {
+    color: #7f1d1d;
+}
+
+[data-theme="dark"] .feedback-correct {
+    background: linear-gradient(135deg, #064e3b, #065f46) !important;
+    border-color: #4ade80 !important;
+}
+
+[data-theme="dark"] .feedback-correct h4 {
+    color: #d1fae5;
+}
+
+[data-theme="dark"] .feedback-correct p {
+    color: #eec;
+}
+
+[data-theme="dark"] .feedback-incorrect {
+    background: linear-gradient(135deg, #7f1d1d, #450a0a) !important;
+    border-color: #f87171 !important;
+}
+
+[data-theme="dark"] .feedback-incorrect h4 {
+    color: #fecaca;
+}
+
+[data-theme="dark"] .feedback-incorrect p {
+    color: #fee2e2;
+}
+
 /* Theme toggle transition */
 html {
     transition: background-color 0.3s ease;
@@ -1421,8 +1494,8 @@ body,
 }
 
 .achievement-badge.earned {
-    background: linear-gradient(135deg, #fef3c7, #fcd34d);
-    box-shadow: 0 0 20px rgba(252, 211, 77, 0.4);
+    background: #fde68a;
+    border: 2px solid #f59e0b;
 }
 
 .achievement-badge.locked {
@@ -1621,12 +1694,15 @@ body,
 ======================================== */
 .mission-complete-modal .modal-content {
     max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     text-align: center;
+    padding: var(--spacing-md);
 }
 
 .complete-celebration {
-    font-size: 4rem;
-    margin-bottom: var(--spacing-md);
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
     animation: bounce 1s ease infinite;
 }
 
@@ -1651,7 +1727,7 @@ body,
 }
 
 .complete-xp h2 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin: 0;
 }
 
@@ -1683,10 +1759,11 @@ body,
 }
 
 .complete-achievement {
-    background: linear-gradient(135deg, #fef3c7, #fcd34d);
-    padding: var(--spacing-lg);
-    border-radius: var(--radius-xl);
-    margin: var(--spacing-lg) 0;
+    background: #fde68a;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-md) 0;
+    border: 2px solid #f59e0b;
 }
 
 .complete-achievement-icon {
@@ -1694,14 +1771,18 @@ body,
 }
 
 .complete-achievement-name {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: var(--spacing-sm) 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: var(--spacing-xs) 0;
+    color: #000000 !important;
+    /* Force ABSOLUTE BLACK for maximum contrast */
 }
 
 .complete-achievement-desc {
-    color: var(--gray-700);
+    color: #1f2937 !important;
+    /* Force DARK GRAY */
     margin: 0;
+    font-weight: 500;
 }
 
 .complete-actions {

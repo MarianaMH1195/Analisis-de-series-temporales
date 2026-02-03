@@ -65,22 +65,118 @@ class MissionSystem {
             this.showMissionSelect();
         });
 
-        // Cerrar modal de completado
+        // Modal de Completado
         document.getElementById('btnMissionCompleteClose')?.addEventListener('click', () => {
             document.getElementById('missionCompleteModal')?.classList.remove('active');
             this.showMissionSelect();
+        });
+
+        // ========================================================
+        // LISTENERS DE MODALES NUEVOS
+        // ========================================================
+
+        // Tutorial
+        document.getElementById('btnTutorial')?.addEventListener('click', () => {
+            document.getElementById('tutorialModal')?.classList.add('active');
+        });
+
+        document.getElementById('btnCloseTutorial')?.addEventListener('click', () => {
+            document.getElementById('tutorialModal')?.classList.remove('active');
+        });
+
+        document.getElementById('tutorialBackdrop')?.addEventListener('click', () => {
+            document.getElementById('tutorialModal')?.classList.remove('active');
+        });
+
+        // Settings
+        document.getElementById('btnSettings')?.addEventListener('click', () => {
+            this.openSettings();
+        });
+
+        document.getElementById('btnCloseSettings')?.addEventListener('click', () => {
+            document.getElementById('settingsModal')?.classList.remove('active');
+        });
+
+        document.getElementById('settingsBackdrop')?.addEventListener('click', () => {
+            document.getElementById('settingsModal')?.classList.remove('active');
+        });
+
+        // Botón Reset en Settings
+        document.getElementById('btnResetProgress')?.addEventListener('click', () => {
+            if (confirm('⚠️ ¿Estás seguro de reiniciar todo tu progreso? Perderás tu rango y medallas.')) {
+                this.resetProgress();
+                document.getElementById('settingsModal')?.classList.remove('active');
+            }
+        });
+
+        // Toggle Sonido en Settings
+        document.getElementById('settingSoundToggle')?.addEventListener('change', (e) => {
+            if (typeof soundManager !== 'undefined') {
+                soundManager.enabled = e.target.checked;
+            }
+        });
+
+        // Toggle Dark Mode en Settings
+        document.getElementById('settingDarkModeToggle')?.addEventListener('change', (e) => {
+            if (typeof uiController !== 'undefined') {
+                const isDark = e.target.checked;
+                const html = document.documentElement;
+                if (isDark) {
+                    html.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    html.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                }
+
+                // Actualizar gráfico misiones
+                if (this.missionChart) {
+                    this.initMissionChart();
+                }
+            }
         });
 
         // Siguiente misión
         document.getElementById('btnNextMission')?.addEventListener('click', () => {
             document.getElementById('missionCompleteModal')?.classList.remove('active');
             const nextId = this.currentMission.id + 1;
-            if (nextId <= 7 && this.playerState.unlockedMissions.includes(nextId)) {
+
+            if (nextId > 7) {
+                // Campaña completada - Mostrar modal de nombre
+                this.showNameModal();
+            } else if (this.playerState.unlockedMissions.includes(nextId)) {
                 this.startMission(nextId);
             } else {
                 this.showMissionSelect();
             }
         });
+
+        // Listeners para el modal de nombre (Final del juego)
+        document.getElementById('btnSaveName')?.addEventListener('click', () => {
+            this.saveScoreAndFinish();
+        });
+
+        document.getElementById('btnSkipName')?.addEventListener('click', () => {
+            this.finishCampaign();
+        });
+    }
+
+    openSettings() {
+        const modal = document.getElementById('settingsModal');
+        if (!modal) return;
+
+        // Sincronizar estado actual de los switches
+        const soundToggle = document.getElementById('settingSoundToggle');
+        if (soundToggle && typeof soundManager !== 'undefined') {
+            soundToggle.checked = soundManager.enabled;
+        }
+
+        const darkToggle = document.getElementById('settingDarkModeToggle');
+        if (darkToggle) {
+            darkToggle.checked = document.documentElement.getAttribute('data-theme') === 'dark';
+        }
+
+        modal.classList.add('active');
     }
 
     showMissionSelect() {
@@ -557,11 +653,18 @@ class MissionSystem {
         const btnNext = document.getElementById('btnNextQuestion');
         const btnHint = document.getElementById('btnShowHint');
 
+        // Limpiar clases previas
+        explanationPanel?.classList.remove('hidden', 'feedback-correct', 'feedback-incorrect');
+        explanationPanel?.style.removeProperty('background');
+        explanationPanel?.style.removeProperty('border-color');
+
+        // Mostrar panel
+        explanationPanel?.classList.remove('hidden');
+
         if (isCorrect) {
             // Correcto
-            explanationPanel?.classList.remove('hidden');
-            explanationPanel.style.background = 'linear-gradient(135deg, #d1fae5, #a7f3d0)';
-            explanationPanel.style.borderColor = '#22c55e';
+            explanationPanel?.classList.add('feedback-correct');
+            explanationPanel.querySelector('h4').textContent = '✅ Correcto';
 
             // Confetti
             if (typeof confetti !== 'undefined') {
@@ -577,10 +680,8 @@ class MissionSystem {
                 soundManager.play('success');
             }
         } else {
-            // Incorrecto - dar otra oportunidad o mostrar explicación
-            explanationPanel?.classList.remove('hidden');
-            explanationPanel.style.background = 'linear-gradient(135deg, #fef2f2, #fecaca)';
-            explanationPanel.style.borderColor = '#ef4444';
+            // Incorrecto
+            explanationPanel?.classList.add('feedback-incorrect');
             explanationPanel.querySelector('h4').textContent = '❌ Incorrecto';
 
             // Animation shake
@@ -652,85 +753,173 @@ class MissionSystem {
         const correctRatio = correctAnswers / mission.questions.length;
         xpEarned = Math.round(xpEarned * correctRatio);
 
-        // Mínimo 10% de XP por intentar
-        xpEarned = Math.max(xpEarned, Math.round(mission.xpReward * 0.1));
+        // Determinamos si aprobó (Mínimo 60% de aciertos)
+        const isSuccess = correctRatio >= 0.6;
 
-        // Actualizar estado
-        if (!this.playerState.completedMissions.includes(mission.id)) {
-            this.playerState.completedMissions.push(mission.id);
+        if (isSuccess) {
+            // Actualizar estado solo si aprobó
+            if (!this.playerState.completedMissions.includes(mission.id)) {
+                this.playerState.completedMissions.push(mission.id);
+            }
+
+            // Solo sumar XP si es mejor que el anterior
+            const previousScore = this.playerState.missionScores[mission.id] || 0;
+            if (xpEarned > previousScore) {
+                this.playerState.totalXP += (xpEarned - previousScore);
+                this.playerState.missionScores[mission.id] = xpEarned;
+            }
+
+            // Desbloquear siguiente misión
+            if (mission.reward.unlock && !this.playerState.unlockedMissions.includes(mission.reward.unlock)) {
+                this.playerState.unlockedMissions.push(mission.reward.unlock);
+            }
+
+            // Achievement
+            const achievementId = mission.id;
+            if (!this.playerState.achievements.includes(achievementId)) {
+                this.playerState.achievements.push(achievementId);
+            }
+
+            // Guardar
+            this.savePlayerState();
         }
 
-        // Solo sumar XP si es mejor que el anterior
-        const previousScore = this.playerState.missionScores[mission.id] || 0;
-        if (xpEarned > previousScore) {
-            this.playerState.totalXP += (xpEarned - previousScore);
-            this.playerState.missionScores[mission.id] = xpEarned;
-        }
-
-        // Desbloquear siguiente misión
-        if (mission.reward.unlock && !this.playerState.unlockedMissions.includes(mission.reward.unlock)) {
-            this.playerState.unlockedMissions.push(mission.reward.unlock);
-        }
-
-        // Achievement
-        const achievementId = mission.id;
-        if (!this.playerState.achievements.includes(achievementId)) {
-            this.playerState.achievements.push(achievementId);
-        }
-
-        // Guardar
-        this.savePlayerState();
-
-        // Mostrar modal de completado
-        this.showMissionCompleteModal(mission, xpEarned, correctAnswers);
+        // Mostrar modal de completado o fallido
+        this.showMissionCompleteModal(mission, xpEarned, correctAnswers, isSuccess);
     }
 
-    showMissionCompleteModal(mission, xpEarned, correctAnswers) {
+    showMissionCompleteModal(mission, xpEarned, correctAnswers, isSuccess) {
         const modal = document.getElementById('missionCompleteModal');
         if (!modal) return;
 
-        document.getElementById('completeMissionTitle').textContent = mission.title;
-        document.getElementById('completeXPEarned').textContent = xpEarned;
+        const titleEl = document.getElementById('completeMissionTitle');
+        const nextBtn = document.getElementById('btnNextMission');
+        const iconEl = document.getElementById('completeAchievementIcon');
+        const descEl = document.getElementById('completeAchievementDesc');
+        const nameEl = document.getElementById('completeAchievementName');
+
         document.getElementById('completeTotalXP').textContent = this.playerState.totalXP;
         document.getElementById('completeCorrectAnswers').textContent =
             `${correctAnswers}/${mission.questions.length}`;
 
-        // Achievement
-        const achievement = achievements.find(a => a.mission === mission.id);
-        if (achievement) {
-            document.getElementById('completeAchievementIcon').textContent = achievement.icon;
-            document.getElementById('completeAchievementName').textContent = achievement.name;
-            document.getElementById('completeAchievementDesc').textContent = achievement.desc;
-        }
+        if (isSuccess) {
+            // ÉXITO
+            titleEl.textContent = `¡${mission.title} Completada!`;
+            titleEl.style.color = 'var(--success)';
+            document.getElementById('completeXPEarned').textContent = `+${xpEarned} XP`;
 
-        // Next mission button
-        const btnNext = document.getElementById('btnNextMission');
-        if (btnNext) {
-            if (mission.id < 7) {
-                btnNext.textContent = `Misión ${mission.id + 1} →`;
-                btnNext.classList.remove('hidden');
-            } else {
-                btnNext.textContent = '🎓 ¡Campaña Completada!';
+            // Achievement
+            const achievement = achievements.find(a => a.mission === mission.id);
+            if (achievement) {
+                iconEl.textContent = achievement.icon;
+                nameEl.textContent = achievement.name;
+                descEl.textContent = achievement.desc;
+                // Estilo normal de éxito
+                document.querySelector('.complete-achievement').style.opacity = '1';
+                document.querySelector('.complete-achievement').style.filter = 'none';
             }
+
+            // Next mission button configuration
+            if (nextBtn) {
+                nextBtn.classList.remove('hidden');
+                // Remover listeners anteriores para evitar duplicados si se re-renderiza
+                const newBtn = nextBtn.cloneNode(true);
+                nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+
+                if (mission.id < 7) {
+                    newBtn.textContent = `Misión ${mission.id + 1} →`;
+                    newBtn.onclick = () => {
+                        modal.classList.remove('active');
+                        if (this.currentMission.id + 1 <= 7) {
+                            this.startMission(this.currentMission.id + 1);
+                        } else {
+                            this.showNameModal();
+                        }
+                    };
+                } else {
+                    newBtn.textContent = '🎓 ¡Campaña Completada!';
+                    newBtn.onclick = () => {
+                        this.showNameModal();
+                    };
+                }
+            }
+
+            // Celebration
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }
+
+            if (typeof soundManager !== 'undefined') soundManager.play('complete');
+
+        } else {
+            // FALLO
+            titleEl.textContent = 'Misión Fallida';
+            titleEl.style.color = '#ef4444';
+            document.getElementById('completeXPEarned').textContent = '+0 XP';
+
+            // Achievement visual feedback (Locked/Grayed out)
+            if (iconEl) iconEl.textContent = '🔒';
+            if (nameEl) nameEl.textContent = 'Logro Bloqueado';
+            if (descEl) descEl.textContent = 'Necesitas al menos 60% de aciertos.';
+
+            document.querySelector('.complete-achievement').style.opacity = '0.7';
+            document.querySelector('.complete-achievement').style.filter = 'grayscale(100%)';
+
+            // Configure button for Retry
+            if (nextBtn) {
+                const newBtn = nextBtn.cloneNode(true);
+                nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+
+                newBtn.textContent = '🔄 Intentar de nuevo';
+                newBtn.classList.remove('hidden');
+                newBtn.onclick = () => {
+                    modal.classList.remove('active');
+                    this.startMission(mission.id); // Restart current
+                };
+            }
+
+            if (typeof soundManager !== 'undefined') soundManager.play('error');
         }
 
         modal.classList.add('active');
+    }
 
-        // Big celebration
-        if (typeof confetti !== 'undefined') {
-            const duration = 3000;
-            const end = Date.now() + duration;
-            const frame = () => {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            };
-            frame();
+    // ========================================================
+    // FINALIZACIÓN DE CAMPAÑA
+    // ========================================================
+
+    showNameModal() {
+        const modal = document.getElementById('nameModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.getElementById('playerNameInput')?.focus();
+        } else {
+            this.finishCampaign();
+        }
+    }
+
+    saveScoreAndFinish() {
+        const nameInput = document.getElementById('playerNameInput');
+        const name = nameInput?.value?.trim() || 'Detective Anónimo';
+
+        if (typeof leaderboardManager !== 'undefined') {
+            // Usar XP total como puntuación. Tiempo ponemos 0 o calculado si quisiéramos.
+            leaderboardManager.addEntry(name, this.playerState.totalXP, 0);
         }
 
-        // Sound
-        if (typeof soundManager !== 'undefined') {
-            soundManager.play('complete');
+        document.getElementById('nameModal')?.classList.remove('active');
+        this.finishCampaign(true);
+    }
+
+    finishCampaign(showLeaderboard = false) {
+        document.getElementById('nameModal')?.classList.remove('active');
+        this.showMissionSelect();
+
+        if (showLeaderboard && typeof leaderboardManager !== 'undefined') {
+            setTimeout(() => {
+                leaderboardManager.render();
+                document.getElementById('leaderboardModal')?.classList.add('active');
+            }, 500);
         }
     }
 
