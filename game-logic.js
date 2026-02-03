@@ -269,71 +269,7 @@ class SandboxManager {
 // 4. LEADERBOARD MANAGER
 // ============================================================
 
-class LeaderboardManager {
-    constructor() {
-        this.storageKey = 'detective_leaderboard';
-        this.scores = this.loadScores();
-    }
 
-    loadScores() {
-        try {
-            return JSON.parse(localStorage.getItem(this.storageKey)) || [];
-        } catch {
-            return [];
-        }
-    }
-
-    addEntry(name, score, time) {
-        this.scores.push({
-            name, score, time, date: new Date().toISOString()
-        });
-        this.scores.sort((a, b) => b.score - a.score || a.time - b.time); // Score desc, Time asc
-        this.scores = this.scores.slice(0, 10); // Keep top 10
-        this.saveScores();
-    }
-
-    saveScores() {
-        localStorage.setItem(this.storageKey, JSON.stringify(this.scores));
-    }
-
-    render() {
-        const tbody = document.getElementById('leaderboardBody');
-        const emptyMsg = document.getElementById('leaderboardEmpty');
-
-        if (!tbody) return;
-        tbody.innerHTML = '';
-
-        if (this.scores.length === 0) {
-            if (emptyMsg) emptyMsg.style.display = 'block';
-            return;
-        }
-
-        if (emptyMsg) emptyMsg.style.display = 'none';
-
-        this.scores.forEach((entry, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td style="text-align: center;">${index + 1}</td>
-                <td style="font-weight: 500;">${entry.name}</td>
-                <td style="text-align: center;">${entry.score}</td>
-                <td style="text-align: center;">${this.formatTime(entry.time)}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    formatTime(ms) {
-        const mins = Math.floor(ms / 60000);
-        const secs = Math.floor((ms % 60000) / 1000);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    clear() {
-        this.scores = [];
-        this.saveScores();
-        this.render();
-    }
-}
 
 // ============================================================
 // 5. GLOBAL UI CONTROLLER
@@ -387,21 +323,7 @@ class UIController {
             }
         });
 
-        // Leaderboard
-        document.getElementById('btnLeaderboard')?.addEventListener('click', () => {
-            leaderboardManager.render();
-            document.getElementById('leaderboardModal').classList.add('active');
-        });
 
-        document.getElementById('btnCloseLeaderboard')?.addEventListener('click', () => {
-            document.getElementById('leaderboardModal').classList.remove('active');
-        });
-
-        document.getElementById('btnClearLeaderboard')?.addEventListener('click', () => {
-            if (confirm('¿Borrar tabla de clasificación?')) {
-                leaderboardManager.clear();
-            }
-        });
 
         // Sandbox Globally accessible
         document.getElementById('btnSandboxModeInline')?.addEventListener('click', () => {
@@ -415,12 +337,12 @@ class UIController {
 // ============================================================
 
 // Global Instances
-let soundManager, leaderboardManager, sandboxManager, uiController;
+let soundManager, sandboxManager, uiController;
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Managers
     soundManager = new SoundManager();
-    leaderboardManager = new LeaderboardManager();
+
     sandboxManager = new SandboxManager();
     uiController = new UIController();
 

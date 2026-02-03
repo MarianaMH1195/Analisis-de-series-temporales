@@ -839,7 +839,7 @@ class MissionSystem {
                 } else {
                     newBtn.textContent = '🎓 ¡Campaña Completada!';
                     newBtn.onclick = () => {
-                        this.showNameModal();
+                        this.finishCampaign();
                     };
                 }
             }
@@ -888,39 +888,10 @@ class MissionSystem {
     // FINALIZACIÓN DE CAMPAÑA
     // ========================================================
 
-    showNameModal() {
-        const modal = document.getElementById('nameModal');
-        if (modal) {
-            modal.classList.add('active');
-            document.getElementById('playerNameInput')?.focus();
-        } else {
-            this.finishCampaign();
-        }
-    }
 
-    saveScoreAndFinish() {
-        const nameInput = document.getElementById('playerNameInput');
-        const name = nameInput?.value?.trim() || 'Detective Anónimo';
-
-        if (typeof leaderboardManager !== 'undefined') {
-            // Usar XP total como puntuación. Tiempo ponemos 0 o calculado si quisiéramos.
-            leaderboardManager.addEntry(name, this.playerState.totalXP, 0);
-        }
-
-        document.getElementById('nameModal')?.classList.remove('active');
-        this.finishCampaign(true);
-    }
-
-    finishCampaign(showLeaderboard = false) {
-        document.getElementById('nameModal')?.classList.remove('active');
+    finishCampaign() {
         this.showMissionSelect();
-
-        if (showLeaderboard && typeof leaderboardManager !== 'undefined') {
-            setTimeout(() => {
-                leaderboardManager.render();
-                document.getElementById('leaderboardModal')?.classList.add('active');
-            }, 500);
-        }
+        // Maybe trigger some global celebration
     }
 
     // ========================================================

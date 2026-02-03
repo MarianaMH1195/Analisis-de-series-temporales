@@ -31,8 +31,7 @@
                     <span class="logo-subtitle">Caso Retail 2022</span>
                 </div>
                 <nav class="header-nav">
-                    <button class="btn-icon" id="btnLeaderboard" title="Mis Expedientes"
-                        aria-label="Ver historial">📋</button>
+
                     <button class="btn-icon" id="btnTutorial" title="Cómo Jugar" aria-label="Ver tutorial">❓</button>
                     <button class="btn-icon" id="btnSettings" title="Configuración"
                         aria-label="Configuración">⚙️</button>
@@ -176,38 +175,6 @@
                 <p id="modalMessage">Has identificado el patrón correctamente.</p>
                 <div class="modal-actions">
                     <button class="btn btn-primary" id="btnModalClose">Continuar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================
-             LEADERBOARD MODAL
-        ======================================== -->
-        <div class="modal" id="leaderboardModal">
-            <div class="modal-backdrop" id="leaderboardBackdrop"></div>
-            <div class="modal-content" style="max-width: 600px;">
-
-                <h3>Historial de Expedientes</h3>
-                <div id="leaderboardContent" style="text-align: left; margin: 1rem 0;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="border-bottom: 2px solid var(--primary);">
-                                <th style="padding: 0.75rem; text-align: center;">#</th>
-                                <th style="padding: 0.75rem; text-align: left;">Detective</th>
-                                <th style="padding: 0.75rem; text-align: center;">Puntos</th>
-                                <th style="padding: 0.75rem; text-align: center;">Tiempo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardBody">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                    <p id="leaderboardEmpty" class="text-muted text-center" style="margin-top: 1rem;">No hay
-                        puntuaciones guardadas aún.</p>
-                </div>
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" id="btnClearLeaderboard">🗑️ Limpiar</button>
-                    <button class="btn btn-primary" id="btnCloseLeaderboard">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -465,17 +432,6 @@
     <!-- Game Logic -->
     <script src="game-logic.js"></script>
 
-    <!-- Force remove icon script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Remove modal icon
-            const modalIcon = document.querySelector('#leaderboardModal .modal-icon');
-            if (modalIcon) modalIcon.remove();
-
-            // Just in case, try to clear any cached HTML content if possible (limited control)
-            console.log('Icon remover script active');
-        });
-    </script>
 </body>
 
 </html>
