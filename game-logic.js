@@ -310,7 +310,7 @@ class UIController {
         document.getElementById('btnSound')?.addEventListener('click', (e) => {
             const enabled = soundManager.toggle();
             e.currentTarget.classList.toggle('active', enabled);
-            e.currentTarget.classList.toggle('active', enabled);
+
             e.currentTarget.innerHTML = enabled ? '<i class="ri-volume-up-line"></i>' : '<i class="ri-volume-mute-line"></i>';
         });
 

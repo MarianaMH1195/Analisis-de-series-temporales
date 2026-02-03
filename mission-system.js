@@ -218,18 +218,18 @@ class MissionSystem {
                     <p class="mission-subtitle">${mission.subtitle}</p>
                     <div class="mission-meta">
                         <span class="mission-difficulty">${mission.stars}</span>
-                        <span class="mission-duration">⏱️ ${mission.duration}</span>
+                        <span class="mission-duration"><i class="ri-time-line"></i> ${mission.duration}</span>
                     </div>
                     <div class="mission-progress">
                         ${isCompleted ? `
-                            <div class="mission-xp-earned">✓ ${score}/${mission.xpReward} XP</div>
+                            <div class="mission-xp-earned"><i class="ri-check-line"></i> ${score}/${mission.xpReward} XP</div>
                         ` : `
-                            <div class="mission-xp-reward">🎯 ${mission.xpReward} XP</div>
+                            <div class="mission-xp-reward"><i class="ri-target-line"></i> ${mission.xpReward} XP</div>
                         `}
                     </div>
                     ${stateClass === 'locked' ? `
                         <div class="mission-lock">
-                            <span class="lock-icon">🔒</span>
+                            <span class="lock-icon"><i class="ri-lock-2-line"></i></span>
                             <p>Completa Misión ${mission.id - 1}</p>
                         </div>
                     ` : `
@@ -265,7 +265,7 @@ class MissionSystem {
         const rankDisplay = document.getElementById('currentRank');
         const rankIcon = document.getElementById('rankIcon');
         if (rankDisplay) rankDisplay.textContent = currentRank.name;
-        if (rankIcon) rankIcon.textContent = currentRank.icon;
+        if (rankIcon) rankIcon.innerHTML = currentRank.icon;
 
         // Achievements
         this.renderAchievements();
@@ -290,7 +290,7 @@ class MissionSystem {
             const earned = this.playerState.achievements.includes(ach.id);
             return `
                 <div class="achievement-badge ${earned ? 'earned' : 'locked'}" title="${ach.desc}">
-                    <span class="achievement-icon">${earned ? ach.icon : '🔒'}</span>
+                    <span class="achievement-icon">${earned ? ach.icon : '<i class="ri-lock-line"></i>'}</span>
                     <span class="achievement-name">${ach.name}</span>
                 </div>
             `;
@@ -335,8 +335,8 @@ class MissionSystem {
         // Header
         document.getElementById('missionPlayTitle').textContent = mission.title;
         document.getElementById('missionPlaySubtitle').textContent = mission.subtitle;
-        document.getElementById('missionPlayIcon').textContent = mission.icon;
-        document.getElementById('missionPlayDifficulty').textContent = mission.stars;
+        document.getElementById('missionPlayIcon').innerHTML = mission.icon;
+        document.getElementById('missionPlayDifficulty').innerHTML = mission.stars;
 
         // Narrative
         document.getElementById('missionNarrative').textContent = mission.narrative;
@@ -345,7 +345,7 @@ class MissionSystem {
         const objectivesList = document.getElementById('missionObjectives');
         if (objectivesList) {
             objectivesList.innerHTML = mission.objectives.map(obj =>
-                `<li>${obj}</li>`
+                `<li><i class="ri-checkbox-blank-circle-line"></i> ${obj}</li>`
             ).join('');
         }
 
@@ -415,7 +415,7 @@ class MissionSystem {
                 
                 <div class="question-hints hidden" id="hintsPanel">
                     <div class="hints-header">
-                        <h4>💡 Pistas</h4>
+                        <h4><i class="ri-lightbulb-line"></i> Pistas</h4>
                         <span class="hints-counter">Usadas: <span id="hintsUsed">0</span>/${question.hints?.length || 0}</span>
                     </div>
                     <div id="hintsContent"></div>
@@ -428,7 +428,7 @@ class MissionSystem {
                 
                 <div class="question-actions">
                     <button class="btn btn-secondary" id="btnShowHint" onclick="missionSystem.showHint()">
-                        💡 Pista
+                        <i class="ri-lightbulb-line"></i> Pista
                     </button>
                     <button class="btn btn-primary" id="btnSubmitAnswer" onclick="missionSystem.submitAnswer()">
                         Enviar Respuesta
@@ -664,7 +664,7 @@ class MissionSystem {
         if (isCorrect) {
             // Correcto
             explanationPanel?.classList.add('feedback-correct');
-            explanationPanel.querySelector('h4').textContent = '✅ Correcto';
+            explanationPanel.querySelector('h4').innerHTML = '<i class="ri-checkbox-circle-line"></i> Correcto';
 
             // Confetti
             if (typeof confetti !== 'undefined') {
@@ -682,7 +682,7 @@ class MissionSystem {
         } else {
             // Incorrecto
             explanationPanel?.classList.add('feedback-incorrect');
-            explanationPanel.querySelector('h4').textContent = '❌ Incorrecto';
+            explanationPanel.querySelector('h4').innerHTML = '<i class="ri-close-circle-line"></i> Incorrecto';
 
             // Animation shake
             if (typeof anime !== 'undefined') {
@@ -811,7 +811,7 @@ class MissionSystem {
             // Achievement
             const achievement = achievements.find(a => a.mission === mission.id);
             if (achievement) {
-                iconEl.textContent = achievement.icon;
+                iconEl.innerHTML = achievement.icon;
                 nameEl.textContent = achievement.name;
                 descEl.textContent = achievement.desc;
                 // Estilo normal de éxito
@@ -858,7 +858,7 @@ class MissionSystem {
             document.getElementById('completeXPEarned').textContent = '+0 XP';
 
             // Achievement visual feedback (Locked/Grayed out)
-            if (iconEl) iconEl.textContent = '🔒';
+            if (iconEl) iconEl.innerHTML = '<i class="ri-lock-line"></i>';
             if (nameEl) nameEl.textContent = 'Logro Bloqueado';
             if (descEl) descEl.textContent = 'Necesitas al menos 60% de aciertos.';
 
