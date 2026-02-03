@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detective de Datos: Análisis de Series Temporales</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #4ade80;
+            --error: #dc3545;
+            --warning: #ffc107;
+            --bg: #f8f9fa;
+            --text: #333;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 2rem;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-content h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header-content p {
+            opacity: 0.9;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+            gap: 1rem;
+        }
+
+        .progress-step {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background-color: var(--success);
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .card h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        /* Chart Section */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            height: 400px;
+            position: relative;
+        }
+
+        /* Input Controls */
+        .control-group {
+            margin: 1.5rem 0;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Phases */
+        .phase-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .phase-section.active {
+            display: block;
+        }
+
+        /* Feedback Elements */
+        .hint-box {
+            background-color: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .explanation-box {
+            background-color: #d1fae5;
+            border-left: 4px solid var(--success);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .interaction-area {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 2rem;
+            }
+            
+            button {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <h1>🕵️‍♂️ Detective de Datos</h1>
+            <p>Caso: Retail Store Inventory 2022</p>
+            <div class="progress-container" id="progressBar">
+                <div class="progress-step active"></div>
+                <div class="progress-step"></div>
+                <div class="progress-step"></div>
+                <div class="progress-step"></div>
+                <div class="progress-step"></div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Main Chart Display -->
+        <div class="chart-container">
+            <canvas id="mainChart"></canvas>
+        </div>
+
+        <!-- FASE 0: BRIEFING -->
+        <div id="phase-0" class="phase-section active">
+            <div class="card">
+                <h2>📁 Archivo del Caso: #AST-2022</h2>
+                <p><strong>Agencia:</strong> Análisis Forense de Datos (AFD)<br>
+                <strong>Objetivo:</strong> Descifrar el comportamiento de ventas.<br>
+                <strong>Datos:</strong> 304 días (Ene-Oct 2022)</p>
+                <hr style="margin: 1rem 0; border: none; border-top: 1px solid #eee;">
+                <p>Has sido asignado para investigar una serie temporal sospechosa. Tu misión es identificar:</p>
+                <ul style="margin: 1rem 0 1rem 2rem;">
+                    <li>📈 La Tendencia</li>
+                    <li>🔄 La Estacionalidad</li>
+                    <li>🚨 Las Anomalías</li>
+                </ul>
+                <button onclick="gameState.moveToPhase(1)">Iniciar Investigación 🔍</button>
+            </div>
+        </div>
+
+        <!-- FASE 1: TENDENCIA -->
+        <div id="phase-1" class="phase-section">
+            <div class="card">
+                <h2>🔎 Fase 1: Análisis de Tendencia</h2>
+                <p>Observa el gráfico. ¿Cómo se comporta la serie a largo plazo?</p>
+                
+                <div class="control-group">
+                    <label for="trend-answer">¿Cuál es la tendencia principal?</label>
+                    <select id="trend-answer">
+                        <option value="">Selecciona una opción...</option>
+                        <option value="uptrend">Creciente (Alza)</option>
+                        <option value="downtrend">Decreciente (Baja)</option>
+                        <option value="stable">Estable (Plana)</option>
+                    </select>
+                    <button onclick="validateTrendAnswer()">Enviar Hipótesis</button>
+                </div>
+
+                <div id="trend-hint" class="hint-box"></div>
+                <div id="trend-explanation" class="explanation-box">
+                    <h3>✅ ¡Correcto!</h3>
+                    <p>Las ventas muestran una clara tendencia positiva. Esto indica un crecimiento sostenido del negocio durante el año.</p>
+                    <button onclick="gameState.moveToPhase(2)" style="margin-top: 1rem;">Continuar al siguiente análisis ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FASE 2: ESTACIONALIDAD -->
+        <div id="phase-2" class="phase-section">
+            <div class="card">
+                <h2>📅 Fase 2: Análisis de Estacionalidad</h2>
+                <p>Examina los patrones repetitivos. ¿Cada cuánto se repite el ciclo?</p>
+
+                <div class="control-group">
+                    <label for="seasonality-answer">Longitud del ciclo (en días):</label>
+                    <input type="number" id="seasonality-answer" placeholder="Ej: 30">
+                    <button onclick="validateSeasonalityAnswer()">Analizar Ciclo</button>
+                </div>
+
+                <div id="seasonality-hint" class="hint-box"></div>
+                <div id="seasonality-explanation" class="explanation-box">
+                    <h3>✅ ¡Correcto!</h3>
+                    <p>El ciclo es de <strong>7 días</strong> (Semanal). Esto es típico en retail, donde los fines de semana suelen comportarse diferente a los días laborales.</p>
+                    <button onclick="gameState.moveToPhase(3)" style="margin-top: 1rem;">Continuar al siguiente análisis ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FASE 3: ANOMALÍAS -->
+        <div id="phase-3" class="phase-section">
+            <div class="card">
+                <h2>🚨 Fase 3: Detección de Anomalías</h2>
+                <p>Busca eventos extraños que rompan el patrón normal.</p>
+
+                <div class="control-group">
+                    <label for="anomaly-answer">¿Cuántos eventos anómalos principales detectas?</label>
+                    <input type="number" id="anomaly-answer" placeholder="Número de eventos">
+                    <button onclick="validateAnomalyAnswer()">Identificar Anomalías</button>
+                </div>
+
+                <div id="anomaly-hint" class="hint-box"></div>
+                <div id="anomaly-explanation" class="explanation-box">
+                    <h3>✅ ¡Bien visto!</h3>
+                    <p>Has detectado los eventos clave (Año Nuevo, Día del Trabajo, Halloween). Identificar estas excepciones es vital para no ensuciar las proyecciones futuras.</p>
+                    <button onclick="gameState.moveToPhase(4)" style="margin-top: 1rem;">Ver Informe Final 📊</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FASE 4: RESOLUCIÓN -->
+        <div id="phase-4" class="phase-section">
+            <div class="card">
+                <h2>🏆 Caso Resuelto</h2>
+                <p>Excelente trabajo, Detective. Aquí está el resumen de tu investigación:</p>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">Creciente 📈</div>
+                        <div class="stat-label">Tendencia</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">7 días 📅</div>
+                        <div class="stat-label">Estacionalidad</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="final-anomalies">4 🚨</div>
+                        <div class="stat-label">Anomalías Detectadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="final-score">100%</div>
+                        <div class="stat-label">Precisión</div>
+                    </div>
+                </div>
+
+                <div class="explanation-box" style="display: block; margin-top: 1.5rem;">
+                    <h3>🧠 Aprendizajes Clave</h3>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>La <strong>inspección visual</strong> es el primer paso de todo análisis.</li>
+                        <li>Entender la <strong>estacionalidad</strong> permite optimizar inventarios.</li>
+                        <li>Las <strong>anomalías</strong> cuentan historias importantes sobre el negocio (promociones, feriados).</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                    <button onclick="gameState.resetGame()">Investigar Otro Caso (Reiniciar)</button>
+                    <button onclick="alert('Informe descargado (simulación)')" style="background-color: var(--secondary)">Descargar Informe 📥</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="game-logic.js"></script>
+</body>
+</html>
