@@ -1826,4 +1826,8 @@ body,
     .question-actions .btn {
         width: 100%;
     }
-}
+}/ *   F o r c e   h i d e   i c o n   i n   l e a d e r b o a r d   m o d a l   a s   p e r   u s e r   r e q u e s t   * /  
+ # l e a d e r b o a r d M o d a l   . m o d a l - i c o n   {  
+         d i s p l a y :   n o n e   ! i m p o r t a n t ;  
+ }  
+ 
