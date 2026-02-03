@@ -1169,3 +1169,580 @@ body,
 .stat-card {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
+
+/* ========================================
+   MISSION SYSTEM - PANTALLAS
+======================================== */
+.mission-screen {
+    display: none;
+}
+
+.mission-screen.active {
+    display: block;
+}
+
+/* ========================================
+   MISSION SELECT - HEADER JUGADOR
+======================================== */
+.player-stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    background: var(--bg-light);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow);
+    flex-wrap: wrap;
+}
+
+.player-rank {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.rank-icon {
+    font-size: 2rem;
+}
+
+.rank-info h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--gray-600);
+}
+
+.rank-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.player-xp {
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+}
+
+.xp-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.875rem;
+}
+
+.xp-bar {
+    height: 12px;
+    background: var(--gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: var(--radius-full);
+    transition: width 0.5s ease;
+}
+
+.player-missions {
+    text-align: center;
+}
+
+.missions-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ========================================
+   MISSION GRID
+======================================== */
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.mission-card {
+    background: var(--bg-light);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.mission-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.mission-card.completed {
+    border-color: var(--success);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(34, 197, 94, 0.1));
+}
+
+.mission-card.unlocked {
+    border-color: var(--primary);
+}
+
+.mission-card.locked {
+    opacity: 0.6;
+    filter: grayscale(30%);
+}
+
+.mission-card.locked:hover {
+    transform: none;
+}
+
+.mission-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.mission-icon {
+    font-size: 2.5rem;
+}
+
+.mission-number {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+}
+
+.mission-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-xs);
+    color: var(--gray-900);
+}
+
+.mission-subtitle {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin: 0 0 var(--spacing-md);
+}
+
+.mission-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.875rem;
+}
+
+.mission-difficulty {
+    letter-spacing: -2px;
+}
+
+.mission-duration {
+    color: var(--gray-500);
+}
+
+.mission-progress {
+    margin-bottom: var(--spacing-md);
+}
+
+.mission-xp-earned {
+    color: var(--success);
+    font-weight: 600;
+}
+
+.mission-xp-reward {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.mission-lock {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+[data-theme="dark"] .mission-lock {
+    background: rgba(15, 23, 42, 0.9);
+}
+
+.lock-icon {
+    font-size: 3rem;
+}
+
+.btn-mission {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* ========================================
+   ACHIEVEMENTS SECTION
+======================================== */
+.achievements-section {
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--bg-light);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+}
+
+.achievements-section h3 {
+    margin: 0 0 var(--spacing-md);
+}
+
+.achievements-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.achievement-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: var(--gray-100);
+    border-radius: var(--radius-lg);
+    min-width: 100px;
+    text-align: center;
+    transition: all var(--transition-base);
+}
+
+.achievement-badge.earned {
+    background: linear-gradient(135deg, #fef3c7, #fcd34d);
+    box-shadow: 0 0 20px rgba(252, 211, 77, 0.4);
+}
+
+.achievement-badge.locked {
+    opacity: 0.5;
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.achievement-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ========================================
+   MISSION PLAY SCREEN
+======================================== */
+.mission-play-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.mission-play-icon {
+    font-size: 3rem;
+}
+
+.mission-play-info h1 {
+    margin: 0;
+    font-size: 1.75rem;
+}
+
+.mission-play-subtitle {
+    color: var(--gray-600);
+    margin: 0;
+}
+
+.mission-play-meta {
+    margin-left: auto;
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.mission-narrative {
+    background: linear-gradient(135deg, #f0f4ff, #e8ecff);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-xl);
+    border-left: 4px solid var(--primary);
+}
+
+[data-theme="dark"] .mission-narrative {
+    background: linear-gradient(135deg, #1e3a8a, #312e81);
+}
+
+.mission-objectives {
+    margin-bottom: var(--spacing-xl);
+}
+
+.mission-objectives h3 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mission-objectives ul {
+    padding-left: var(--spacing-lg);
+}
+
+.mission-objectives li {
+    margin-bottom: var(--spacing-sm);
+    color: var(--gray-700);
+}
+
+/* ========================================
+   QUESTION CARDS
+======================================== */
+.question-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+}
+
+@media (max-width: 968px) {
+    .question-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+.question-card {
+    background: var(--bg-light);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+}
+
+.question-title {
+    font-size: 1.25rem;
+    margin: 0 0 var(--spacing-sm);
+}
+
+.question-description {
+    color: var(--gray-600);
+    margin-bottom: var(--spacing-lg);
+}
+
+.question-hints {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+    border: 1px solid #f59e0b;
+}
+
+[data-theme="dark"] .question-hints {
+    background: linear-gradient(135deg, #422006, #78350f);
+    border-color: #b45309;
+}
+
+.hints-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.hints-header h4 {
+    margin: 0;
+}
+
+.hints-counter {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.hint-item {
+    background: rgba(255, 255, 255, 0.5);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius);
+    margin-top: var(--spacing-sm);
+}
+
+[data-theme="dark"] .hint-item {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.hint-level {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--warning);
+}
+
+.question-explanation {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.question-explanation h4 {
+    margin: 0 0 var(--spacing-sm);
+}
+
+.question-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.question-progress {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-lg);
+    font-weight: 600;
+}
+
+/* Chart container in mission */
+.mission-chart-container {
+    background: var(--bg-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+}
+
+.mission-chart-wrapper {
+    height: 350px;
+}
+
+/* ========================================
+   MISSION COMPLETE MODAL
+======================================== */
+.mission-complete-modal .modal-content {
+    max-width: 500px;
+    text-align: center;
+}
+
+.complete-celebration {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-md);
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.complete-xp {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.complete-xp h2 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.complete-xp p {
+    margin: var(--spacing-sm) 0 0;
+    opacity: 0.9;
+}
+
+.complete-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.complete-stat {
+    text-align: center;
+}
+
+.complete-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.complete-stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.complete-achievement {
+    background: linear-gradient(135deg, #fef3c7, #fcd34d);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.complete-achievement-icon {
+    font-size: 3rem;
+}
+
+.complete-achievement-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: var(--spacing-sm) 0;
+}
+
+.complete-achievement-desc {
+    color: var(--gray-700);
+    margin: 0;
+}
+
+.complete-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+}
+
+/* ========================================
+   RESPONSIVE MISSION SYSTEM
+======================================== */
+@media (max-width: 768px) {
+    .player-stats-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .player-xp {
+        width: 100%;
+        max-width: none;
+    }
+
+    .missions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mission-play-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .mission-play-meta {
+        margin-left: 0;
+    }
+
+    .question-actions {
+        flex-direction: column;
+    }
+
+    .question-actions .btn {
+        width: 100%;
+    }
+}

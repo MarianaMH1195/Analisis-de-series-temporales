@@ -76,331 +76,119 @@
         ======================================== -->
         <main class="main-content">
 
-            <!-- CHART SECTION (Visible en todas las fases) -->
-            <section class="chart-section" id="chartSection">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <span>📊</span>
-                        <span id="chartTitleText">Serie Temporal: Unidades Vendidas 2022</span>
-                    </h3>
-                    <div class="chart-controls">
-                        <button id="btnZoomIn" title="Acercar">🔍+</button>
-                        <button id="btnZoomOut" title="Alejar">🔍-</button>
-                        <button id="btnResetChart" title="Restablecer">↻</button>
+            <!-- ========================================
+                 SCREEN 1: MISSION SELECT
+            ======================================== -->
+            <div id="missionSelectScreen" class="mission-screen active">
+                <!-- Player Stats Header -->
+                <div class="player-stats-bar">
+                    <div class="player-rank">
+                        <div class="rank-icon" id="rankIcon">🌱</div>
+                        <div class="rank-info">
+                            <h3>Rango Actual</h3>
+                            <div class="rank-name" id="currentRank">Novato</div>
+                        </div>
+                    </div>
+
+                    <div class="player-xp">
+                        <div class="xp-label">
+                            <span>Progreso de Nivel</span>
+                            <span><span id="totalXP">0</span> XP / 1650</span>
+                        </div>
+                        <div class="xp-bar">
+                            <div class="xp-fill" id="xpProgressFill" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="player-missions">
+                        <div class="missions-count" id="missionsCompleted">0/7</div>
+                        <div class="text-muted text-sm">Misiones</div>
                     </div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="mainChart"></canvas>
+
+                <!-- Missions Grid -->
+                <h2 class="section-title mb-lg">Expedientes Disponibles</h2>
+                <div class="missions-grid" id="missionsGrid">
+                    <!-- Injected by JS -->
                 </div>
-                <div class="chart-legend" id="chartLegend">
-                    <span class="legend-item">
-                        <span class="legend-color" style="background: var(--primary);"></span>
-                        Datos reales
-                    </span>
+
+                <!-- Achievements Section -->
+                <div class="achievements-section">
+                    <h3>🏅 Medallas y Logros</h3>
+                    <div class="achievements-container" id="achievementsContainer">
+                        <!-- Injected by JS -->
+                    </div>
                 </div>
-            </section>
+            </div>
 
             <!-- ========================================
-                 FASE 0: BRIEFING
+                 SCREEN 2: MISSION PLAY
             ======================================== -->
-            <section id="phase-0" class="phase-section active" data-phase="0">
-                <div class="card" style="animation: slideUp 0.6s ease;">
-                    <div class="card-header">
-                        <span class="phase-badge">Briefing</span>
-                        <h2>📋 Archivo del Caso #AST-2022</h2>
+            <div id="missionPlayScreen" class="mission-screen">
+                <!-- Mission Header -->
+                <div class="mission-play-header">
+                    <button class="btn btn-secondary btn-sm" id="btnBackToMissions">
+                        ← Volver
+                    </button>
+                    <div class="mission-play-title-group" style="flex: 1; margin-left: 1rem;">
+                        <h1 id="missionPlayTitle">Título Misión</h1>
+                        <p class="mission-play-subtitle" id="missionPlaySubtitle">Subtítulo</p>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-lg">
-                            <p class="text-muted mb-sm">AGENCIA</p>
-                            <p class="mb-md"><strong>Análisis Forense de Datos (AFD)</strong></p>
-
-                            <p class="text-muted mb-sm">EMPRESA INVESTIGADA</p>
-                            <p class="mb-md"><strong>ChainMart Retail Inc.</strong></p>
-
-                            <p class="text-muted mb-sm">PERIODO DE ANÁLISIS</p>
-                            <p class="mb-md"><strong>2022-01-01 a 2022-10-31</strong> (304 días)</p>
-
-                            <p class="text-muted mb-sm">VARIABLE BAJO INVESTIGACIÓN</p>
-                            <p><strong>Unidades Vendidas Diarias (agregación todas categorías)</strong></p>
-                        </div>
-
-                        <div class="explanation-box"
-                            style="display: block; background: linear-gradient(135deg, #f0f4ff, #e8ecff); border-color: var(--primary);">
-                            <h3 style="color: var(--primary);"><span>🎯</span> Tu Misión</h3>
-                            <p>Como <strong>Detective de Series Temporales</strong>, debes analizar los datos de ventas
-                                e identificar tres componentes clave:</p>
-                            <ul style="margin: 1rem 0 0 1.5rem;">
-                                <li><strong>📈 Tendencia</strong> - Dirección general a largo plazo</li>
-                                <li><strong>🔄 Estacionalidad</strong> - Patrones que se repiten</li>
-                                <li><strong>🚨 Anomalías</strong> - Eventos inusuales</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <div>
-                            <div class="text-muted">Tiempo estimado: 10-15 minutos</div>
-                            <button class="btn btn-secondary" id="btnSandboxMode" style="margin-top: 0.5rem;">
-                                🧪 Modo Sandbox
-                            </button>
-                        </div>
-                        <button class="btn btn-primary btn-lg" id="btnStartInvestigation">
-                            Iniciar Investigación 🔍
-                        </button>
+                    <div class="mission-play-meta">
+                        <span class="mission-difficulty" id="missionPlayDifficulty">⭐⭐</span>
+                        <span class="mission-icon" id="missionPlayIcon">📦</span>
                     </div>
                 </div>
-            </section>
 
-            <!-- ========================================
-                 FASE 1: TENDENCIA
-            ======================================== -->
-            <section id="phase-1" class="phase-section" data-phase="1">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="phase-badge">Fase 1</span>
-                        <h2>📈 Análisis de Tendencia</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-lg">Observa el gráfico completo de los 304 días. <strong>¿Cuál es la dirección
-                                general de las ventas a lo largo del tiempo?</strong></p>
+                <!-- Narrative Section -->
+                <div class="mission-narrative">
+                    <h3>📁 Briefing de la Misión</h3>
+                    <p id="missionNarrative">...</p>
 
-                        <div class="form-group">
-                            <label class="form-label">Selecciona tu análisis:</label>
-                            <div class="radio-group">
-                                <div class="radio-option">
-                                    <input type="radio" name="trendAnswer" id="trend-uptrend" value="uptrend">
-                                    <label for="trend-uptrend">📈 Creciente (Alza)</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" name="trendAnswer" id="trend-downtrend" value="downtrend">
-                                    <label for="trend-downtrend">📉 Decreciente (Baja)</label>
-                                </div>
-                                <div class="radio-option">
-                                    <input type="radio" name="trendAnswer" id="trend-stable" value="stable">
-                                    <label for="trend-stable">➡️ Estable (Plano)</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="trend-hints" class="hints-panel hidden">
-                            <div class="hints-header">
-                                <h4>💡 Pistas</h4>
-                                <span class="hints-counter">Usadas: <span id="trendHintCount">0</span>/3</span>
-                            </div>
-                            <div id="trend-hints-content"></div>
-                        </div>
-
-                        <div id="trend-explanation" class="explanation-box hidden">
-                            <h3>✅ ¡Excelente análisis!</h3>
-                            <p>Las ventas muestran una <strong>tendencia creciente</strong> sostenida. Esto indica un
-                                crecimiento del negocio durante el año, con un incremento aproximado de
-                                <strong>+265%</strong> desde enero hasta octubre.
-                            </p>
-                            <p class="text-muted mt-sm" style="margin-top: 0.5rem;"><em>Ecuación de regresión: y = 53.8x
-                                    + 6,543 (donde x es el día del año)</em></p>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-secondary" id="btnTrendHint">
-                            💡 Pedir Pista
-                        </button>
-                        <button class="btn btn-primary" id="btnTrendSubmit">
-                            Enviar Análisis
-                        </button>
-                        <button class="btn btn-success hidden" id="btnTrendNext">
-                            Continuar ➡️
-                        </button>
+                    <div class="mission-objectives mt-md">
+                        <h4>Objetivos:</h4>
+                        <ul id="missionObjectives"></ul>
                     </div>
                 </div>
-            </section>
 
-            <!-- ========================================
-                 FASE 2: ESTACIONALIDAD
-            ======================================== -->
-            <section id="phase-2" class="phase-section" data-phase="2">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="phase-badge">Fase 2</span>
-                        <h2>🔄 Análisis de Estacionalidad</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-lg">Examina los patrones repetitivos en los datos. <strong>¿Cada cuántos días se
-                                repite el patrón de comportamiento?</strong></p>
-
-                        <div class="form-group">
-                            <label class="form-label" for="seasonalityInput">Longitud del ciclo (en días):</label>
-                            <input type="number" id="seasonalityInput" class="form-input" placeholder="Ej: 30" min="1"
-                                max="365">
-                        </div>
-
-                        <div id="seasonality-hints" class="hints-panel hidden">
-                            <div class="hints-header">
-                                <h4>💡 Pistas</h4>
-                                <span class="hints-counter">Usadas: <span id="seasonalityHintCount">0</span>/3</span>
-                            </div>
-                            <div id="seasonality-hints-content"></div>
-                        </div>
-
-                        <div id="seasonality-explanation" class="explanation-box hidden">
-                            <h3>✅ ¡Patrón identificado!</h3>
-                            <p>El ciclo es de <strong>7 días</strong> (semanal). Esto es típico en retail donde los
-                                comportamientos de compra varían según el día de la semana:</p>
-                            <ul style="margin: 0.5rem 0 0 1.5rem;">
-                                <li><strong>🔝 Sábado:</strong> Mayor actividad (~16,100 unidades promedio)</li>
-                                <li><strong>🔻 Domingo:</strong> Menor actividad (~14,200 unidades promedio)</li>
-                            </ul>
+                <!-- Chart Section -->
+                <section class="chart-section mb-xl">
+                    <div class="chart-header">
+                        <h3 class="chart-title">
+                            <span>📊</span>
+                            <span id="chartTitleText">Datos del Caso</span>
+                        </h3>
+                        <div class="chart-controls">
+                            <button id="btnZoomIn" title="Acercar">🔍+</button>
+                            <button id="btnZoomOut" title="Alejar">🔍-</button>
+                            <button id="btnResetChart" title="Restablecer">↻</button>
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <button class="btn btn-secondary" id="btnSeasonalityHint">
-                            💡 Pedir Pista
-                        </button>
-                        <button class="btn btn-primary" id="btnSeasonalitySubmit">
-                            Analizar Ciclo
-                        </button>
-                        <button class="btn btn-success hidden" id="btnSeasonalityNext">
-                            Continuar ➡️
-                        </button>
+                    <div class="mission-chart-container">
+                        <div class="mission-chart-wrapper">
+                            <canvas id="missionChart"></canvas>
+                        </div>
                     </div>
+                </section>
+
+                <!-- Question Section -->
+                <div class="question-progress" id="questionProgress">Pregunta 1 de 3</div>
+
+                <div id="questionContainer">
+                    <!-- Question injected by JS -->
                 </div>
-            </section>
 
-            <!-- ========================================
-                 FASE 3: ANOMALÍAS
-            ======================================== -->
-            <section id="phase-3" class="phase-section" data-phase="3">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="phase-badge">Fase 3</span>
-                        <h2>🚨 Detección de Anomalías</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-lg">Busca eventos anómalos que rompan el patrón normal. <strong>¿Cuántos eventos
-                                especiales o anómalos principales detectas?</strong></p>
-
-                        <div class="form-group">
-                            <label class="form-label" for="anomalyInput">Número de anomalías detectadas:</label>
-                            <input type="number" id="anomalyInput" class="form-input" placeholder="Ej: 5" min="0"
-                                max="50">
-                        </div>
-
-                        <div id="anomaly-hints" class="hints-panel hidden">
-                            <div class="hints-header">
-                                <h4>💡 Pistas</h4>
-                                <span class="hints-counter">Usadas: <span id="anomalyHintCount">0</span>/3</span>
-                            </div>
-                            <div id="anomaly-hints-content"></div>
-                        </div>
-
-                        <div id="anomaly-explanation" class="explanation-box hidden">
-                            <h3>✅ ¡Bien visto, detective!</h3>
-                            <p>Has identificado correctamente los eventos anómalos clave:</p>
-                            <ul style="margin: 0.5rem 0 0 1.5rem;">
-                                <li><strong>🎆 1 de Enero:</strong> Año Nuevo (-58%, cierre de tienda)</li>
-                                <li><strong>🛠️ 1-2 de Mayo:</strong> Día del Trabajo (-11% a -12%)</li>
-                                <li><strong>🎃 31 de Octubre:</strong> Halloween (+50%, promoción especial)</li>
-                            </ul>
-                            <p class="text-muted" style="margin-top: 0.5rem;"><em>Identificar anomalías es crucial para
-                                    no contaminar modelos predictivos.</em></p>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-secondary" id="btnAnomalyHint">
-                            💡 Pedir Pista
-                        </button>
-                        <button class="btn btn-primary" id="btnAnomalySubmit">
-                            Identificar Anomalías
-                        </button>
-                        <button class="btn btn-success hidden" id="btnAnomalyNext">
-                            Ver Informe Final 📊
-                        </button>
-                    </div>
+                <!-- Footer Tools -->
+                <div class="mission-footer mt-xl text-center">
+                    <button class="btn btn-secondary" id="btnRecapNarrative"
+                        onclick="document.querySelector('.mission-narrative').scrollIntoView({behavior: 'smooth'})">
+                        📜 Ver Briefing
+                    </button>
+                    <button class="btn btn-secondary" id="btnSandboxModeInline">
+                        🧪 Abrir Sandbox
+                    </button>
                 </div>
-            </section>
-
-            <!-- ========================================
-                 FASE 4: RESOLUCIÓN
-            ======================================== -->
-            <section id="phase-4" class="phase-section" data-phase="4">
-                <div class="card">
-                    <div class="card-header">
-                        <span class="phase-badge"
-                            style="background: linear-gradient(135deg, #4ade80, #22c55e);">Completado</span>
-                        <h2>🏆 Caso Resuelto</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-lg text-center" style="font-size: 1.125rem;">¡Excelente trabajo, Detective! Has
-                            completado el análisis forense de la serie temporal.</p>
-
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">📈</div>
-                                <div class="stat-label">Tendencia</div>
-                                <div class="stat-value">Creciente</div>
-                                <div class="stat-detail">+265% en 10 meses</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">🔄</div>
-                                <div class="stat-label">Estacionalidad</div>
-                                <div class="stat-value">7 días</div>
-                                <div class="stat-detail">Patrón semanal</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">🚨</div>
-                                <div class="stat-label">Anomalías</div>
-                                <div class="stat-value" id="finalAnomalies">4</div>
-                                <div class="stat-detail">Eventos detectados</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">⭐</div>
-                                <div class="stat-label">Puntuación</div>
-                                <div class="stat-value" id="finalScore">0</div>
-                                <div class="stat-detail" id="finalScoreDetail">pts</div>
-                            </div>
-                        </div>
-
-                        <div class="insights-section">
-                            <h3>📊 Hallazgos Clave del Caso</h3>
-                            <ul class="insights-list">
-                                <li>
-                                    <span class="insight-icon">✓</span>
-                                    <span>Crecimiento sostenido de ventas durante todo el período analizado</span>
-                                </li>
-                                <li>
-                                    <span class="insight-icon">✓</span>
-                                    <span>Patrón semanal predecible: mayor actividad los sábados, menor los
-                                        domingos</span>
-                                </li>
-                                <li>
-                                    <span class="insight-icon">✓</span>
-                                    <span>Eventos anómalos correlacionados con festividades y promociones</span>
-                                </li>
-                                <li>
-                                    <span class="insight-icon">✓</span>
-                                    <span>Datos limpios para modelado predictivo (excluyendo anomalías)</span>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div id="achievements-section" class="explanation-box hidden"
-                            style="display: block; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
-                            <h3 style="color: #b45309;">🏅 Logros Desbloqueados</h3>
-                            <div id="achievements-list"
-                                style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;"></div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <button class="btn btn-secondary" id="btnRestart">
-                            🔄 Investigar Otro Caso
-                        </button>
-                        <button class="btn btn-secondary" id="btnViewLeaderboard">
-                            🏆 Ver Ranking
-                        </button>
-                        <button class="btn btn-primary" id="btnDownloadReport">
-                            📥 Descargar Informe PDF
-                        </button>
-                    </div>
-                </div>
-            </section>
+            </div>
 
         </main>
 
@@ -488,6 +276,40 @@
                 <div class="modal-actions">
                     <button class="btn btn-secondary" id="btnSkipName">Omitir</button>
                     <button class="btn btn-primary" id="btnSaveName">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             MISSION COMPLETE MODAL
+        ======================================== -->
+        <div class="modal mission-complete-modal" id="missionCompleteModal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="complete-celebration">🎉</div>
+                <h2 id="completeMissionTitle">Misión Completada</h2>
+
+                <div class="complete-xp">
+                    <h2>+<span id="completeXPEarned">0</span> XP</h2>
+                    <p>Total: <span id="completeTotalXP">0</span> XP</p>
+                </div>
+
+                <div class="complete-stats">
+                    <div class="complete-stat">
+                        <div class="complete-stat-value" id="completeCorrectAnswers">0/0</div>
+                        <div class="complete-stat-label">Aciertos</div>
+                    </div>
+                </div>
+
+                <div class="complete-achievement">
+                    <div class="complete-achievement-icon" id="completeAchievementIcon">🏅</div>
+                    <h3 class="complete-achievement-name" id="completeAchievementName">Logro</h3>
+                    <p class="complete-achievement-desc" id="completeAchievementDesc">Descripción</p>
+                </div>
+
+                <div class="complete-actions">
+                    <button class="btn btn-secondary" id="btnMissionCompleteClose">Cerrar</button>
+                    <button class="btn btn-primary" id="btnNextMission">Siguiente Misión →</button>
                 </div>
             </div>
         </div>
@@ -600,6 +422,11 @@
     <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
     <!-- jsPDF for PDF export -->
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <!-- Mission System Data -->
+    <script src="datasets.js"></script>
+    <script src="missions.js"></script>
+    <script src="mission-system.js"></script>
 
     <!-- Game Logic -->
     <script src="game-logic.js"></script>
