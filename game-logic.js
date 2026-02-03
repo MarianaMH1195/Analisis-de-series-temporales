@@ -956,14 +956,363 @@ class ScoringSystem {
 
 
 // ============================================================
+// 6.1 SOUND MANAGER
+// ============================================================
+
+class SoundManager {
+    constructor() {
+        this.enabled = true;
+        this.context = null;
+        this.sounds = {
+            success: { frequency: 800, duration: 0.15, type: 'sine' },
+            error: { frequency: 300, duration: 0.2, type: 'sawtooth' },
+            click: { frequency: 600, duration: 0.05, type: 'sine' },
+            complete: { frequency: [523.25, 659.25, 783.99], duration: 0.3, type: 'sine' }
+        };
+    }
+
+    /**
+     * Initialize audio context (must be called after user interaction)
+     */
+    init() {
+        if (!this.context) {
+            try {
+                this.context = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.warn('Web Audio API not supported');
+            }
+        }
+    }
+
+    /**
+     * Play a sound effect
+     * @param {string} name - Sound name ('success', 'error', 'click', 'complete')
+     */
+    play(name) {
+        if (!this.enabled || !this.context) return;
+
+        const sound = this.sounds[name];
+        if (!sound) return;
+
+        try {
+            if (Array.isArray(sound.frequency)) {
+                // Chord (for complete sound)
+                sound.frequency.forEach((freq, i) => {
+                    setTimeout(() => this.playTone(freq, sound.duration, sound.type), i * 100);
+                });
+            } else {
+                this.playTone(sound.frequency, sound.duration, sound.type);
+            }
+        } catch (e) {
+            console.warn('Could not play sound:', e);
+        }
+    }
+
+    /**
+     * Play a single tone
+     */
+    playTone(frequency, duration, type) {
+        const oscillator = this.context.createOscillator();
+        const gainNode = this.context.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(this.context.destination);
+
+        oscillator.type = type;
+        oscillator.frequency.value = frequency;
+
+        gainNode.gain.setValueAtTime(0.3, this.context.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+
+        oscillator.start();
+        oscillator.stop(this.context.currentTime + duration);
+    }
+
+    /**
+     * Toggle sound on/off
+     * @returns {boolean} New state
+     */
+    toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+    }
+}
+
+
+// ============================================================
+// 6.2 LEADERBOARD MANAGER
+// ============================================================
+
+class LeaderboardManager {
+    constructor() {
+        this.storageKey = 'detective_leaderboard';
+        this.maxEntries = 10;
+    }
+
+    /**
+     * Get all leaderboard entries
+     * @returns {Array}
+     */
+    getEntries() {
+        try {
+            const data = localStorage.getItem(this.storageKey);
+            return data ? JSON.parse(data) : [];
+        } catch (e) {
+            console.warn('Could not load leaderboard:', e);
+            return [];
+        }
+    }
+
+    /**
+     * Add a new entry
+     * @param {string} name 
+     * @param {number} score 
+     * @param {number} timeMs 
+     * @returns {number} Position in leaderboard (1-based)
+     */
+    addEntry(name, score, timeMs) {
+        const entries = this.getEntries();
+
+        const newEntry = {
+            name: name || 'Anónimo',
+            score,
+            time: timeMs,
+            date: new Date().toISOString()
+        };
+
+        entries.push(newEntry);
+
+        // Sort by score (desc), then by time (asc)
+        entries.sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.time - b.time;
+        });
+
+        // Keep only top entries
+        const trimmed = entries.slice(0, this.maxEntries);
+
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(trimmed));
+        } catch (e) {
+            console.warn('Could not save leaderboard:', e);
+        }
+
+        // Return position (1-based)
+        return trimmed.findIndex(e =>
+            e.name === newEntry.name &&
+            e.score === newEntry.score &&
+            e.date === newEntry.date
+        ) + 1;
+    }
+
+    /**
+     * Clear leaderboard
+     */
+    clear() {
+        try {
+            localStorage.removeItem(this.storageKey);
+        } catch (e) {
+            console.warn('Could not clear leaderboard:', e);
+        }
+    }
+
+    /**
+     * Format time for display
+     * @param {number} ms 
+     * @returns {string}
+     */
+    formatTime(ms) {
+        const seconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    }
+}
+
+
+// ============================================================
+// 6.3 PDF REPORT GENERATOR
+// ============================================================
+
+class PDFReportGenerator {
+    /**
+     * Generate and download PDF report
+     * @param {Object} state - Game state
+     * @param {Object} stats - Data statistics
+     */
+    static generate(state, stats) {
+        // Check if jsPDF is available
+        if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF === 'undefined') {
+            console.error('jsPDF not loaded');
+            return false;
+        }
+
+        const { jsPDF } = jspdf;
+        const doc = new jsPDF();
+
+        // Colors
+        const primary = [102, 126, 234];
+        const success = [74, 222, 128];
+        const gray = [107, 114, 128];
+
+        // Title
+        doc.setFillColor(...primary);
+        doc.rect(0, 0, 210, 40, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Detective de Datos', 105, 20, { align: 'center' });
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Informe de Análisis de Series Temporales', 105, 32, { align: 'center' });
+
+        // Reset text color
+        doc.setTextColor(0, 0, 0);
+        let y = 55;
+
+        // Case Info
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Información del Caso', 20, y);
+        y += 10;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        const caseInfo = [
+            ['Empresa:', 'ChainMart Retail Inc.'],
+            ['Período:', '2022-01-01 a 2022-10-31 (304 días)'],
+            ['Variable:', 'Unidades Vendidas Diarias'],
+            ['Fecha del Informe:', new Date().toLocaleDateString('es-ES')]
+        ];
+
+        caseInfo.forEach(([label, value]) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(label, 20, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(value, 70, y);
+            y += 7;
+        });
+
+        y += 10;
+
+        // Analysis Results
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Resultados del Análisis', 20, y);
+        y += 10;
+
+        doc.setFontSize(11);
+        const results = [
+            ['Tendencia:', state.trendSolved ? 'Creciente (+265%)' : 'No determinada', state.trendSolved],
+            ['Estacionalidad:', state.seasonalitySolved ? '7 días (semanal)' : 'No determinada', state.seasonalitySolved],
+            ['Anomalías:', state.anomalySolved ? '4 eventos detectados' : 'No determinadas', state.anomalySolved]
+        ];
+
+        results.forEach(([label, value, correct]) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(label, 20, y);
+            doc.setFont('helvetica', 'normal');
+            if (correct) {
+                doc.setTextColor(...success);
+                doc.text('✓ ' + value, 70, y);
+            } else {
+                doc.setTextColor(...gray);
+                doc.text('✗ ' + value, 70, y);
+            }
+            doc.setTextColor(0, 0, 0);
+            y += 7;
+        });
+
+        y += 10;
+
+        // Statistics
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Estadísticas del Dataset', 20, y);
+        y += 10;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        const statsInfo = [
+            ['Media:', `${stats.mean.toLocaleString()} unidades`],
+            ['Mediana:', `${stats.median.toLocaleString()} unidades`],
+            ['Mínimo:', `${stats.min.toLocaleString()} unidades`],
+            ['Máximo:', `${stats.max.toLocaleString()} unidades`],
+            ['Desv. Estándar:', `${stats.stdDev.toLocaleString()} unidades`]
+        ];
+
+        statsInfo.forEach(([label, value]) => {
+            doc.setFont('helvetica', 'bold');
+            doc.text(label, 20, y);
+            doc.setFont('helvetica', 'normal');
+            doc.text(value, 70, y);
+            y += 7;
+        });
+
+        y += 10;
+
+        // Score
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Puntuación', 20, y);
+        y += 10;
+
+        const scoring = ScoringSystem.calculate(state);
+        doc.setFontSize(24);
+        doc.setTextColor(...primary);
+        doc.text(`${scoring.score} puntos`, 20, y);
+        doc.setTextColor(0, 0, 0);
+        y += 12;
+
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        scoring.breakdown.forEach(item => {
+            const sign = item.points >= 0 ? '+' : '';
+            doc.text(`${item.label}: ${sign}${item.points} pts`, 25, y);
+            y += 6;
+        });
+
+        y += 10;
+
+        // Achievements
+        if (scoring.achievements.length > 0) {
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Logros Desbloqueados', 20, y);
+            y += 10;
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            scoring.achievements.forEach(ach => {
+                doc.text(`${ach.name} - ${ach.desc}`, 25, y);
+                y += 6;
+            });
+        }
+
+        // Footer
+        doc.setFillColor(...gray);
+        doc.rect(0, 280, 210, 17, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(9);
+        doc.text('Detective de Datos - Píldora Formativa de Análisis de Series Temporales', 105, 290, { align: 'center' });
+
+        // Download
+        doc.save('Detective_de_Datos_Informe.pdf');
+        return true;
+    }
+}
+
+// ============================================================
 // 7. UI CONTROLLER
 // ============================================================
 
 class UIController {
-    constructor(gameState, dataAnalyzer, chartManager) {
+    constructor(gameState, dataAnalyzer, chartManager, soundManager, leaderboard) {
         this.gameState = gameState;
         this.dataAnalyzer = dataAnalyzer;
         this.chartManager = chartManager;
+        this.soundManager = soundManager;
+        this.leaderboard = leaderboard;
         this.setupEventListeners();
     }
 
@@ -973,6 +1322,8 @@ class UIController {
     setupEventListeners() {
         // Start Investigation
         document.getElementById('btnStartInvestigation')?.addEventListener('click', () => {
+            this.soundManager.init();
+            this.soundManager.play('click');
             this.gameState.startTimer();
             this.moveToPhase(1);
         });
@@ -995,10 +1346,40 @@ class UIController {
         // Phase 4: Resolution
         document.getElementById('btnRestart')?.addEventListener('click', () => this.restartGame());
         document.getElementById('btnDownloadReport')?.addEventListener('click', () => this.downloadReport());
+        document.getElementById('btnViewLeaderboard')?.addEventListener('click', () => this.showLeaderboard());
 
         // Modal
         document.getElementById('btnModalClose')?.addEventListener('click', () => this.closeModal());
         document.getElementById('modalBackdrop')?.addEventListener('click', () => this.closeModal());
+
+        // Leaderboard Modal
+        document.getElementById('btnLeaderboard')?.addEventListener('click', () => this.showLeaderboard());
+        document.getElementById('btnCloseLeaderboard')?.addEventListener('click', () => this.closeLeaderboard());
+        document.getElementById('leaderboardBackdrop')?.addEventListener('click', () => this.closeLeaderboard());
+        document.getElementById('btnClearLeaderboard')?.addEventListener('click', () => {
+            if (confirm('¿Estás seguro de que quieres borrar toda la clasificación?')) {
+                this.leaderboard.clear();
+                this.updateLeaderboardDisplay();
+            }
+        });
+
+        // Sound Toggle
+        document.getElementById('btnSound')?.addEventListener('click', () => {
+            this.soundManager.init();
+            const enabled = this.soundManager.toggle();
+            const btn = document.getElementById('btnSound');
+            if (btn) {
+                btn.textContent = enabled ? '🔊' : '🔇';
+                btn.classList.toggle('active', enabled);
+            }
+        });
+
+        // Name Modal
+        document.getElementById('btnSaveName')?.addEventListener('click', () => this.savePlayerName());
+        document.getElementById('btnSkipName')?.addEventListener('click', () => this.skipPlayerName());
+        document.getElementById('playerNameInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.savePlayerName();
+        });
 
         // Enter key for inputs
         document.getElementById('seasonalityInput')?.addEventListener('keypress', (e) => {
@@ -1201,6 +1582,9 @@ class UIController {
         // Update score display
         this.updateScoreDisplay();
 
+        // Play success sound
+        this.soundManager.play('success');
+
         // Show success modal
         this.showModal('✅', '¡Correcto!', 'Has identificado el patrón correctamente.');
 
@@ -1220,6 +1604,9 @@ class UIController {
      * @param {string} feedback 
      */
     onIncorrectAnswer(phase, feedback) {
+        // Play error sound
+        this.soundManager.play('error');
+
         this.showModal('❌', 'No es correcto', feedback);
 
         // Shake animation on input
@@ -1346,6 +1733,14 @@ class UIController {
             };
             frame();
         }
+
+        // Play celebration sound
+        this.soundManager.play('complete');
+
+        // Show name input modal after a short delay
+        setTimeout(() => {
+            this.showNameModal();
+        }, 2000);
     }
 
     /**
@@ -1390,10 +1785,102 @@ class UIController {
     }
 
     /**
-     * Download report (mock)
+     * Download PDF report
      */
     downloadReport() {
-        this.showModal('📥', 'Informe Generado', 'El informe del caso se ha generado correctamente. (Simulación)');
+        const stats = this.dataAnalyzer.calculateStats();
+        const success = PDFReportGenerator.generate(this.gameState.state, stats);
+
+        if (success) {
+            this.soundManager.play('success');
+            this.showModal('✅', 'Informe Generado', 'El informe PDF se ha descargado correctamente.');
+        } else {
+            this.showModal('⚠️', 'Error', 'No se pudo generar el PDF. Verifica que jsPDF esté cargado.');
+        }
+    }
+
+    /**
+     * Show leaderboard modal
+     */
+    showLeaderboard() {
+        this.updateLeaderboardDisplay();
+        document.getElementById('leaderboardModal')?.classList.add('active');
+    }
+
+    /**
+     * Close leaderboard modal
+     */
+    closeLeaderboard() {
+        document.getElementById('leaderboardModal')?.classList.remove('active');
+    }
+
+    /**
+     * Update leaderboard display
+     */
+    updateLeaderboardDisplay() {
+        const entries = this.leaderboard.getEntries();
+        const tbody = document.getElementById('leaderboardBody');
+        const emptyMsg = document.getElementById('leaderboardEmpty');
+
+        if (!tbody) return;
+
+        if (entries.length === 0) {
+            tbody.innerHTML = '';
+            if (emptyMsg) emptyMsg.style.display = 'block';
+            return;
+        }
+
+        if (emptyMsg) emptyMsg.style.display = 'none';
+
+        tbody.innerHTML = entries.map((entry, i) => `
+            <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.75rem; text-align: center; font-weight: 600;">
+                    ${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                </td>
+                <td style="padding: 0.75rem;">${entry.name}</td>
+                <td style="padding: 0.75rem; text-align: center; font-weight: 600; color: var(--primary);">
+                    ${entry.score}
+                </td>
+                <td style="padding: 0.75rem; text-align: center; font-family: var(--font-mono);">
+                    ${this.leaderboard.formatTime(entry.time)}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    /**
+     * Show name input modal (called when game completes)
+     */
+    showNameModal() {
+        document.getElementById('nameModal')?.classList.add('active');
+        document.getElementById('playerNameInput')?.focus();
+    }
+
+    /**
+     * Save player name to leaderboard
+     */
+    savePlayerName() {
+        const input = document.getElementById('playerNameInput');
+        const name = input?.value.trim() || 'Anónimo';
+        const scoring = ScoringSystem.calculate(this.gameState.state);
+
+        const position = this.leaderboard.addEntry(
+            name,
+            scoring.score,
+            this.gameState.state.completionTime
+        );
+
+        document.getElementById('nameModal')?.classList.remove('active');
+
+        this.soundManager.play('success');
+        this.showModal('🏆', `¡Puesto #${position}!`, `Tu puntuación de ${scoring.score} pts ha sido guardada en el ranking.`);
+    }
+
+    /**
+     * Skip saving player name
+     */
+    skipPlayerName() {
+        document.getElementById('nameModal')?.classList.remove('active');
     }
 
     /**
@@ -1443,10 +1930,15 @@ class DetectiveGame {
         this.stateManager = new GameStateManager();
         this.dataAnalyzer = new DataAnalyzer(realDataset);
         this.chartManager = new ChartManager();
+        this.soundManager = new SoundManager();
+        this.leaderboard = new LeaderboardManager();
+
         this.uiController = new UIController(
             this.stateManager,
             this.dataAnalyzer,
-            this.chartManager
+            this.chartManager,
+            this.soundManager,
+            this.leaderboard
         );
 
         // Subscribe to state changes
