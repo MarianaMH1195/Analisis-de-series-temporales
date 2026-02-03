@@ -1137,6 +1137,25 @@ body {
     background: rgba(102, 126, 234, 0.2);
 }
 
+/* Mission Box in Dark Mode (inline styles override) */
+[data-theme="dark"] .explanation-box[style*="background: linear-gradient(135deg, #f0f4ff"] {
+    background: linear-gradient(135deg, #1e3a8a, #312e81) !important;
+    border-color: var(--primary) !important;
+}
+
+[data-theme="dark"] .explanation-box[style*="background: linear-gradient(135deg, #f0f4ff"] h3 {
+    color: #93c5fd !important;
+}
+
+[data-theme="dark"] .explanation-box[style*="background: linear-gradient(135deg, #f0f4ff"] p,
+[data-theme="dark"] .explanation-box[style*="background: linear-gradient(135deg, #f0f4ff"] li {
+    color: #e0e7ff !important;
+}
+
+[data-theme="dark"] .explanation-box[style*="background: linear-gradient(135deg, #f0f4ff"] strong {
+    color: #c7d2fe !important;
+}
+
 /* Theme toggle transition */
 html {
     transition: background-color 0.3s ease;
