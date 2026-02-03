@@ -1302,6 +1302,294 @@ class PDFReportGenerator {
     }
 }
 
+
+// ============================================================
+// 6.4 SANDBOX MANAGER
+// ============================================================
+
+class SandboxManager {
+    constructor(dataset, dataAnalyzer) {
+        this.dataset = dataset;
+        this.dataAnalyzer = dataAnalyzer;
+        this.chart = null;
+        this.currentData = null;
+    }
+
+    /**
+     * Open sandbox modal
+     */
+    open() {
+        document.getElementById('sandboxModal')?.classList.add('active');
+        this.initializeChart();
+        this.updateStats();
+        this.setupListeners();
+    }
+
+    /**
+     * Close sandbox modal
+     */
+    close() {
+        document.getElementById('sandboxModal')?.classList.remove('active');
+        if (this.chart) {
+            this.chart.destroy();
+            this.chart = null;
+        }
+    }
+
+    /**
+     * Setup event listeners for sandbox controls
+     */
+    setupListeners() {
+        // Chart type
+        document.getElementById('sandboxChartType')?.addEventListener('change', () => this.updateChart());
+
+        // Overlays
+        document.getElementById('sandboxShowTrend')?.addEventListener('change', () => this.updateChart());
+        document.getElementById('sandboxShowMovingAvg')?.addEventListener('change', () => this.updateChart());
+        document.getElementById('sandboxShowAnomalies')?.addEventListener('change', () => this.updateChart());
+
+        // Date range
+        document.getElementById('sandboxStartDate')?.addEventListener('change', () => {
+            this.updateChart();
+            this.updateStats();
+        });
+        document.getElementById('sandboxEndDate')?.addEventListener('change', () => {
+            this.updateChart();
+            this.updateStats();
+        });
+    }
+
+    /**
+     * Get filtered data based on date range
+     */
+    getFilteredData() {
+        const startDate = document.getElementById('sandboxStartDate')?.value || '2022-01-01';
+        const endDate = document.getElementById('sandboxEndDate')?.value || '2022-10-31';
+
+        const startIdx = this.dataset.dates.findIndex(d => d >= startDate);
+        const endIdx = this.dataset.dates.findIndex(d => d > endDate);
+
+        const dates = this.dataset.dates.slice(startIdx, endIdx === -1 ? undefined : endIdx);
+        const values = this.dataset.values.slice(startIdx, endIdx === -1 ? undefined : endIdx);
+
+        return { dates, values };
+    }
+
+    /**
+     * Initialize chart
+     */
+    initializeChart() {
+        const ctx = document.getElementById('sandboxChart');
+        if (!ctx) return;
+
+        if (this.chart) {
+            this.chart.destroy();
+        }
+
+        const data = this.getFilteredData();
+        this.currentData = data;
+
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.dates,
+                datasets: [{
+                    label: 'Ventas Diarias',
+                    data: data.values,
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                },
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+    }
+
+    /**
+     * Update chart based on controls
+     */
+    updateChart() {
+        if (!this.chart) return;
+
+        const chartType = document.getElementById('sandboxChartType')?.value || 'line';
+        const showTrend = document.getElementById('sandboxShowTrend')?.checked;
+        const showMovingAvg = document.getElementById('sandboxShowMovingAvg')?.checked;
+        const showAnomalies = document.getElementById('sandboxShowAnomalies')?.checked;
+
+        const data = this.getFilteredData();
+        this.currentData = data;
+
+        // Build datasets
+        const datasets = [];
+
+        // Main data
+        if (chartType === 'bar') {
+            // Aggregate by month
+            const monthly = this.aggregateMonthly(data);
+            datasets.push({
+                label: 'Ventas Mensuales',
+                data: monthly.values,
+                backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                borderColor: '#667eea',
+                borderWidth: 1
+            });
+            this.chart.data.labels = monthly.labels;
+        } else {
+            datasets.push({
+                label: 'Ventas Diarias',
+                data: data.values,
+                borderColor: '#667eea',
+                backgroundColor: chartType === 'scatter' ? '#667eea' : 'rgba(102, 126, 234, 0.1)',
+                fill: chartType !== 'scatter',
+                tension: chartType === 'scatter' ? 0 : 0.3,
+                pointRadius: chartType === 'scatter' ? 3 : 1,
+                showLine: chartType !== 'scatter'
+            });
+            this.chart.data.labels = data.dates;
+        }
+
+        // Trend line
+        if (showTrend && chartType !== 'bar') {
+            const n = data.values.length;
+            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+            data.values.forEach((y, x) => {
+                sumX += x;
+                sumY += y;
+                sumXY += x * y;
+                sumX2 += x * x;
+            });
+            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+
+            const trendData = data.values.map((_, i) => Math.round(slope * i + intercept));
+            datasets.push({
+                label: 'Tendencia',
+                data: trendData,
+                borderColor: '#ffc107',
+                borderWidth: 2,
+                borderDash: [8, 4],
+                fill: false,
+                pointRadius: 0
+            });
+        }
+
+        // Moving average
+        if (showMovingAvg && chartType !== 'bar') {
+            const window = 7;
+            const maData = data.values.map((_, i, arr) => {
+                if (i < window - 1) return null;
+                const slice = arr.slice(i - window + 1, i + 1);
+                return Math.round(slice.reduce((a, b) => a + b, 0) / window);
+            });
+            datasets.push({
+                label: 'Media Móvil (7 días)',
+                data: maData,
+                borderColor: '#22c55e',
+                borderWidth: 2,
+                fill: false,
+                pointRadius: 0
+            });
+        }
+
+        // Update chart
+        this.chart.config.type = chartType === 'scatter' ? 'scatter' : (chartType === 'bar' ? 'bar' : 'line');
+        this.chart.data.datasets = datasets;
+
+        // Add anomaly annotations
+        if (showAnomalies && chartType !== 'bar') {
+            const annotations = {};
+            anomaliesInfo.forEach((a, i) => {
+                const idx = data.dates.indexOf(a.date);
+                if (idx !== -1) {
+                    annotations[`anomaly${i}`] = {
+                        type: 'point',
+                        xValue: a.date,
+                        yValue: data.values[idx],
+                        backgroundColor: '#dc3545',
+                        borderColor: '#dc3545',
+                        radius: 8
+                    };
+                }
+            });
+            this.chart.options.plugins.annotation = { annotations };
+        } else {
+            this.chart.options.plugins.annotation = { annotations: {} };
+        }
+
+        this.chart.update();
+    }
+
+    /**
+     * Aggregate data by month
+     */
+    aggregateMonthly(data) {
+        const monthlyData = {};
+        data.dates.forEach((date, i) => {
+            const month = date.substring(0, 7);
+            if (!monthlyData[month]) monthlyData[month] = [];
+            monthlyData[month].push(data.values[i]);
+        });
+
+        const labels = Object.keys(monthlyData).sort();
+        const values = labels.map(m =>
+            Math.round(monthlyData[m].reduce((a, b) => a + b, 0) / monthlyData[m].length)
+        );
+
+        return { labels, values };
+    }
+
+    /**
+     * Update statistics display
+     */
+    updateStats() {
+        const data = this.getFilteredData();
+        const values = data.values;
+
+        if (values.length === 0) return;
+
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const sorted = [...values].sort((a, b) => a - b);
+        const min = sorted[0];
+        const max = sorted[sorted.length - 1];
+        const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length;
+        const std = Math.sqrt(variance);
+
+        document.getElementById('sandboxMean').textContent = Math.round(mean).toLocaleString();
+        document.getElementById('sandboxMax').textContent = max.toLocaleString();
+        document.getElementById('sandboxMin').textContent = min.toLocaleString();
+        document.getElementById('sandboxStd').textContent = Math.round(std).toLocaleString();
+    }
+
+    /**
+     * Export data to CSV
+     */
+    exportCSV() {
+        const data = this.getFilteredData();
+
+        let csv = 'Fecha,Ventas\n';
+        data.dates.forEach((date, i) => {
+            csv += `${date},${data.values[i]}\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'detective_datos_export.csv';
+        link.click();
+    }
+}
+
 // ============================================================
 // 7. UI CONTROLLER
 // ============================================================
@@ -1387,6 +1675,18 @@ class UIController {
         });
         document.getElementById('anomalyInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.submitAnomaly();
+        });
+
+        // Sandbox Mode
+        document.getElementById('btnSandboxMode')?.addEventListener('click', () => {
+            this.soundManager.init();
+            this.soundManager.play('click');
+            this.openSandbox();
+        });
+        document.getElementById('btnCloseSandbox')?.addEventListener('click', () => this.closeSandbox());
+        document.getElementById('sandboxBackdrop')?.addEventListener('click', () => this.closeSandbox());
+        document.getElementById('btnExportSandboxData')?.addEventListener('click', () => {
+            if (this.sandbox) this.sandbox.exportCSV();
         });
     }
 
@@ -1881,6 +2181,25 @@ class UIController {
      */
     skipPlayerName() {
         document.getElementById('nameModal')?.classList.remove('active');
+    }
+
+    /**
+     * Open sandbox mode
+     */
+    openSandbox() {
+        if (!this.sandbox) {
+            this.sandbox = new SandboxManager(realDataset, this.dataAnalyzer);
+        }
+        this.sandbox.open();
+    }
+
+    /**
+     * Close sandbox mode
+     */
+    closeSandbox() {
+        if (this.sandbox) {
+            this.sandbox.close();
+        }
     }
 
     /**

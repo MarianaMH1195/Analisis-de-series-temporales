@@ -135,7 +135,12 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="text-muted">Tiempo estimado: 10-15 minutos</div>
+                        <div>
+                            <div class="text-muted">Tiempo estimado: 10-15 minutos</div>
+                            <button class="btn btn-secondary" id="btnSandboxMode" style="margin-top: 0.5rem;">
+                                🧪 Modo Sandbox
+                            </button>
+                        </div>
                         <button class="btn btn-primary btn-lg" id="btnStartInvestigation">
                             Iniciar Investigación 🔍
                         </button>
@@ -481,6 +486,96 @@
                 <div class="modal-actions">
                     <button class="btn btn-secondary" id="btnSkipName">Omitir</button>
                     <button class="btn btn-primary" id="btnSaveName">Guardar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             SANDBOX MODAL
+        ======================================== -->
+        <div class="modal" id="sandboxModal">
+            <div class="modal-backdrop" id="sandboxBackdrop"></div>
+            <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+                <div class="modal-icon">🧪</div>
+                <h3>Modo Sandbox</h3>
+                <p class="mb-lg">Explora los datos libremente sin restricciones del juego.</p>
+
+                <div style="text-align: left;">
+                    <!-- Chart Type Selector -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Visualización:</label>
+                        <select id="sandboxChartType" class="form-select">
+                            <option value="line">📈 Línea (Serie Temporal)</option>
+                            <option value="bar">📊 Barras (Agregación Mensual)</option>
+                            <option value="scatter">⚫ Puntos (Dispersión)</option>
+                        </select>
+                    </div>
+
+                    <!-- Overlays -->
+                    <div class="form-group">
+                        <label class="form-label">Capas adicionales:</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            <label
+                                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer;">
+                                <input type="checkbox" id="sandboxShowTrend"> 📏 Línea de Tendencia
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer;">
+                                <input type="checkbox" id="sandboxShowMovingAvg"> 📉 Media Móvil (7 días)
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer;">
+                                <input type="checkbox" id="sandboxShowAnomalies"> 🚨 Marcar Anomalías
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Date Range -->
+                    <div class="form-group">
+                        <label class="form-label">Rango de Datos:</label>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="date" id="sandboxStartDate" class="form-input" value="2022-01-01"
+                                style="flex: 1;">
+                            <span>hasta</span>
+                            <input type="date" id="sandboxEndDate" class="form-input" value="2022-10-31"
+                                style="flex: 1;">
+                        </div>
+                    </div>
+
+                    <!-- Stats Display -->
+                    <div id="sandboxStats" class="stats-grid" style="margin: 1.5rem 0;">
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-label">Media</div>
+                            <div class="stat-value" id="sandboxMean">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📈</div>
+                            <div class="stat-label">Máximo</div>
+                            <div class="stat-value" id="sandboxMax">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📉</div>
+                            <div class="stat-label">Mínimo</div>
+                            <div class="stat-value" id="sandboxMin">--</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📐</div>
+                            <div class="stat-label">Desv. Estándar</div>
+                            <div class="stat-value" id="sandboxStd">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Preview -->
+                    <div
+                        style="background: var(--gray-50); border-radius: var(--radius-md); padding: 1rem; margin: 1rem 0;">
+                        <canvas id="sandboxChart" style="width: 100%; height: 300px;"></canvas>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="btnExportSandboxData">📥 Exportar CSV</button>
+                    <button class="btn btn-primary" id="btnCloseSandbox">Cerrar</button>
                 </div>
             </div>
         </div>
