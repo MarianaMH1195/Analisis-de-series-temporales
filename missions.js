@@ -54,11 +54,9 @@ const missionsData = [
         },
 
         reward: {
-            reward: {
-                achievement: "🔍 Primer Caso",
-                achievementDesc: "Has completado tu primera investigación",
-                unlock: 2
-            }
+            achievement: "🔍 Primer Caso",
+            achievementDesc: "Has completado tu primera investigación",
+            unlock: 2
         }
     },
 
