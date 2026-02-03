@@ -1688,6 +1688,16 @@ class UIController {
         document.getElementById('btnExportSandboxData')?.addEventListener('click', () => {
             if (this.sandbox) this.sandbox.exportCSV();
         });
+
+        // Dark Mode Toggle
+        document.getElementById('btnDarkMode')?.addEventListener('click', () => {
+            this.soundManager.init();
+            this.soundManager.play('click');
+            this.toggleDarkMode();
+        });
+
+        // Initialize dark mode from localStorage
+        this.initDarkMode();
     }
 
     /**
@@ -2199,6 +2209,70 @@ class UIController {
     closeSandbox() {
         if (this.sandbox) {
             this.sandbox.close();
+        }
+    }
+
+    /**
+     * Initialize dark mode from localStorage
+     */
+    initDarkMode() {
+        const savedTheme = localStorage.getItem('detective_theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            this.updateDarkModeButton(true);
+        }
+    }
+
+    /**
+     * Toggle dark mode
+     */
+    toggleDarkMode() {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-theme') === 'dark';
+
+        if (isDark) {
+            html.removeAttribute('data-theme');
+            localStorage.setItem('detective_theme', 'light');
+            this.updateDarkModeButton(false);
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            localStorage.setItem('detective_theme', 'dark');
+            this.updateDarkModeButton(true);
+        }
+
+        // Update chart colors
+        this.updateChartTheme(!isDark);
+    }
+
+    /**
+     * Update dark mode button appearance
+     */
+    updateDarkModeButton(isDark) {
+        const btn = document.getElementById('btnDarkMode');
+        if (btn) {
+            btn.textContent = isDark ? '☀️' : '🌙';
+            btn.title = isDark ? 'Modo Claro' : 'Modo Oscuro';
+            btn.classList.toggle('active', isDark);
+        }
+    }
+
+    /**
+     * Update chart theme colors
+     */
+    updateChartTheme(isDark) {
+        if (this.chartManager && this.chartManager.chart) {
+            const textColor = isDark ? '#f8fafc' : '#1f2937';
+            const gridColor = isDark ? '#334155' : '#e5e7eb';
+
+            this.chartManager.chart.options.scales.x.ticks.color = textColor;
+            this.chartManager.chart.options.scales.y.ticks.color = textColor;
+            this.chartManager.chart.options.scales.x.grid.color = gridColor;
+            this.chartManager.chart.options.scales.y.grid.color = gridColor;
+            this.chartManager.chart.options.plugins.legend.labels.color = textColor;
+
+            this.chartManager.chart.update();
         }
     }
 
