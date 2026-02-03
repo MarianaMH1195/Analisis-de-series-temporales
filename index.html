@@ -15,7 +15,7 @@
         rel="stylesheet">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3.1">
 </head>
 
 <body>
@@ -32,13 +32,15 @@
                 </div>
                 <nav class="header-nav">
                     <button class="btn-icon" id="btnLeaderboard" title="Mis Expedientes"
-                        aria-label="Ver historial">📂</button>
+                        aria-label="Ver historial">📋</button>
                     <button class="btn-icon" id="btnTutorial" title="Cómo Jugar" aria-label="Ver tutorial">❓</button>
                     <button class="btn-icon" id="btnSettings" title="Configuración"
                         aria-label="Configuración">⚙️</button>
                 </nav>
             </div>
         </header>
+
+
 
         <!-- ========================================
              MAIN CONTENT
@@ -462,6 +464,18 @@
 
     <!-- Game Logic -->
     <script src="game-logic.js"></script>
+
+    <!-- Force remove icon script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Remove modal icon
+            const modalIcon = document.querySelector('#leaderboardModal .modal-icon');
+            if (modalIcon) modalIcon.remove();
+
+            // Just in case, try to clear any cached HTML content if possible (limited control)
+            console.log('Icon remover script active');
+        });
+    </script>
 </body>
 
 </html>
