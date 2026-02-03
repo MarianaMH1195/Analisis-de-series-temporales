@@ -1818,6 +1818,201 @@ body,
     .mission-play-meta {
         margin-left: 0;
     }
+}
+
+.hints-header h4 {
+    margin: 0;
+}
+
+.hints-counter {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.hint-item {
+    background: rgba(255, 255, 255, 0.5);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius);
+    margin-top: var(--spacing-sm);
+}
+
+[data-theme="dark"] .hint-item {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.hint-level {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--warning);
+}
+
+.question-explanation {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-lg) 0;
+}
+
+.question-explanation h4 {
+    margin: 0 0 var(--spacing-sm);
+}
+
+.question-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.question-progress {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-lg);
+    font-weight: 600;
+}
+
+/* Chart container in mission */
+.mission-chart-container {
+    background: var(--bg-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+}
+
+.mission-chart-wrapper {
+    height: 350px;
+}
+
+/* ========================================
+   MISSION COMPLETE MODAL
+======================================== */
+.mission-complete-modal .modal-content {
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+    padding: var(--spacing-md);
+}
+
+.complete-celebration {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+    animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.complete-xp {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.complete-xp h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.complete-xp p {
+    margin: var(--spacing-sm) 0 0;
+    opacity: 0.9;
+}
+
+.complete-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    margin: var(--spacing-lg) 0;
+}
+
+.complete-stat {
+    text-align: center;
+}
+
+.complete-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.complete-stat-label {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+.complete-achievement {
+    background: #fde68a;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-md) 0;
+    border: 2px solid #f59e0b;
+}
+
+.complete-achievement-icon {
+    font-size: 3rem;
+}
+
+.complete-achievement-name {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin: var(--spacing-xs) 0;
+    color: #000000 !important;
+    /* Force ABSOLUTE BLACK for maximum contrast */
+}
+
+.complete-achievement-desc {
+    color: #1f2937 !important;
+    /* Force DARK GRAY */
+    margin: 0;
+    font-weight: 500;
+}
+
+.complete-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-xl);
+}
+
+/* ========================================
+   RESPONSIVE MISSION SYSTEM
+======================================== */
+@media (max-width: 768px) {
+    .player-stats-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .player-xp {
+        width: 100%;
+        max-width: none;
+    }
+
+    .missions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mission-play-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .mission-play-meta {
+        margin-left: 0;
+    }
 
     .question-actions {
         flex-direction: column;
@@ -1826,8 +2021,9 @@ body,
     .question-actions .btn {
         width: 100%;
     }
-}/ *   F o r c e   h i d e   i c o n   i n   l e a d e r b o a r d   m o d a l   a s   p e r   u s e r   r e q u e s t   * /  
- # l e a d e r b o a r d M o d a l   . m o d a l - i c o n   {  
-         d i s p l a y :   n o n e   ! i m p o r t a n t ;  
- }  
- 
+}
+
+/* Force hide icon in leaderboard modal as per user request */
+#leaderboardModal .modal-icon {
+    display: none !important;
+}
