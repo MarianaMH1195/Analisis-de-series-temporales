@@ -149,6 +149,37 @@ body {
 }
 
 /* ========================================
+   CERTFICATE MODAL
+   ======================================== */
+.certificate-modal-content {
+    max-width: 900px !important;
+    width: 90%;
+}
+
+.certificate-container {
+    display: flex;
+    justify-content: center;
+    background: #555;
+    padding: 20px;
+    border-radius: 8px;
+    overflow: auto;
+}
+
+#certificateCanvas {
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    height: auto;
+}
+
+.certificate-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* ========================================
    HEADER
 ======================================== */
 .app-header {

@@ -427,6 +427,49 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
     <!-- Numeral.js -->
     <script src="https://cdn.jsdelivr.net/npm/numeral@2.0.6/numeral.min.js"></script>
+    <!-- Name Input Modal -->
+    <div class="modal" id="nameModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="ri-user-star-line"></i> ¡Identifícate, Detective!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Has completado todas las misiones. Ingresa tu nombre para tu certificado.</p>
+                <div class="form-group">
+                    <input type="text" id="playerNameInput" class="form-input" placeholder="Tu nombre o alias">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="btnSaveName">Generar Certificado</button>
+                    <button class="btn btn-secondary" id="btnSkipName">Omitir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div class="modal" id="certificateModal">
+        <div class="modal-content certificate-modal-content">
+            <button class="modal-close" id="btnCloseCertificate">&times;</button>
+            <div class="modal-header">
+                <h2><i class="ri-award-line"></i> Certificado de Excelencia</h2>
+                <p>¡Felicitaciones! Has dominado el análisis de datos.</p>
+            </div>
+            <div class="modal-body">
+                <div id="certificateContainer" class="certificate-container">
+                    <canvas id="certificateCanvas" width="800" height="600"></canvas>
+                </div>
+                <div class="certificate-actions">
+                    <button class="btn btn-primary" id="btnDownloadCertificate">
+                        <i class="ri-download-line"></i> Descargar Certificado
+                    </button>
+                    <button class="btn btn-secondary" id="btnCloseCertificateAction">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- jsPDF for PDF export -->
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
@@ -434,6 +477,7 @@
     <script src="datasets.js"></script>
     <script src="missions.js"></script>
     <script src="mission-system.js"></script>
+    <script src="certificate-system.js"></script>
 
     <!-- Game Logic -->
     <script src="game-logic.js"></script>
