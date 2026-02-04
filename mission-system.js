@@ -453,7 +453,7 @@ class MissionSystem {
         const config = mission.chartConfig;
 
         // Contenedor principal del gráfico/visualización
-        const chartWrapper = document.querySelector('.chart-container');
+        const chartWrapper = document.querySelector('.mission-chart-wrapper');
         if (!chartWrapper) return;
 
         // Limpiar visualización previa (HTML o Canvas)
