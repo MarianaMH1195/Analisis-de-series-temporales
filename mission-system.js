@@ -450,100 +450,356 @@ class MissionSystem {
 
     initMissionChart() {
         const mission = this.currentMission;
-        const dataset = allDatasets[mission.dataset];
-        if (!dataset) return;
+        const config = mission.chartConfig;
 
-        const ctx = document.getElementById('missionChart');
+        // Contenedor principal del gráfico/visualización
+        const chartWrapper = document.querySelector('.chart-container');
+        if (!chartWrapper) return;
+
+        // Limpiar visualización previa (HTML o Canvas)
+        this.clearMissionVisual(chartWrapper);
+
+        // Si es tipo visualización HTML (Misión 7 y dashboards)
+        if (['business_kpis', 'strategic_roadmap', 'comparison_dashboard'].includes(config.type)) {
+            this.renderHtmlVisual(chartWrapper, config);
+            return;
+        }
+
+        // Si es gráfico Chart.js
+        const ctx = this.createCanvas(chartWrapper);
         if (!ctx) return;
 
-        // Destruir chart anterior si existe
-        if (this.missionChart) {
-            this.missionChart.destroy();
-        }
+        const dataset = allDatasets[mission.dataset]; // dataset principal
+        if (!dataset && !config.data) return; // Validación básica
 
-        const config = mission.chartConfig;
-        let chartData, chartType, chartOptions;
+        let chartData = { labels: [], datasets: [] };
+        let chartOptions = this.getBaseChartOptions(config);
 
-        if (config.useWeeklyData) {
-            // Gráfico de barras para estacionalidad
-            chartType = 'bar';
-            chartData = {
-                labels: config.labels,
-                datasets: [{
-                    label: 'Ventas Promedio',
-                    data: Object.values(dataset.weeklyPattern),
-                    backgroundColor: config.labels.map((_, i) =>
-                        i === 5 ? 'rgba(74, 222, 128, 0.8)' : 'rgba(102, 126, 234, 0.6)'
-                    ),
-                    borderColor: config.labels.map((_, i) =>
-                        i === 5 ? '#22c55e' : '#667eea'
-                    ),
-                    borderWidth: 2
-                }]
-            };
-        } else {
-            // Gráfico de línea estándar
-            chartType = 'line';
-            chartData = {
-                labels: dataset.dates,
-                datasets: [{
+        // ============================================================
+        // LÓGICA POR TIPO DE GRÁFICO
+        // ============================================================
+
+        switch (config.type) {
+            case 'line':
+                // Misión 1: Línea simple
+                chartData.labels = dataset.dates;
+                chartData.datasets.push({
                     label: dataset.variable,
                     data: dataset.values,
-                    borderColor: config.color || '#667eea',
-                    backgroundColor: (config.color || 'rgba(102, 126, 234, 0.1)').replace(')', ', 0.1)'),
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: config.showAnomalies ? 2 : 1
-                }]
-            };
-
-            // Añadir línea de tendencia si aplica
-            if (config.showTrendLine) {
-                const n = dataset.values.length;
-                let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-                dataset.values.forEach((y, x) => {
-                    sumX += x;
-                    sumY += y;
-                    sumXY += x * y;
-                    sumX2 += x * x;
+                    borderColor: config.color,
+                    backgroundColor: config.color.replace(')', ', 0.1)').replace('rgb', 'rgba').replace('#', 'rgba(102, 126, 234, 0.1)'), // Hack color
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    tension: 0.4,
+                    fill: false
                 });
-                const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-                const intercept = (sumY - slope * sumX) / n;
-                const trendData = dataset.values.map((_, i) => Math.round(slope * i + intercept));
+                break;
+
+            case 'bar':
+                // Misión 2: Patrón Semanal
+                chartData.labels = config.labels;
+                const weeklyValues = Object.values(dataset.weeklyPattern);
+                chartData.datasets.push({
+                    label: 'Ventas Promedio',
+                    data: weeklyValues,
+                    backgroundColor: config.labels.map((_, i) => i === 5 ? '#4ade80' : 'rgba(102, 126, 234, 0.6)'), // Sábado verde
+                    borderColor: config.labels.map((_, i) => i === 5 ? '#22c55e' : '#667eea'),
+                    borderWidth: 1
+                });
+                // Plugin datalabels para ver valores
+                chartOptions.plugins.datalabels = {
+                    anchor: 'end',
+                    align: 'top',
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    formatter: (value) => numeral(value).format('0.0a')
+                };
+                chartOptions.scales.y.suggestedMax = Math.max(...weeklyValues) * 1.2;
+                break;
+
+            case 'scatter_anomaly':
+                // Misión 3: Anomalías
+                chartData.labels = dataset.dates;
+                const pointColors = dataset.values.map((v, i) => {
+                    const date = dataset.dates[i];
+                    const anomaly = config.anomalies.find(a => a.date === date);
+                    return anomaly ? anomaly.color : config.color || '#667eea';
+                });
+
+                const pointRadii = dataset.values.map((v, i) => {
+                    const date = dataset.dates[i];
+                    return config.anomalies.find(a => a.date === date) ? 6 : 2;
+                });
 
                 chartData.datasets.push({
-                    label: 'Tendencia',
-                    data: trendData,
-                    borderColor: '#ffc107',
-                    borderWidth: 2,
-                    borderDash: [8, 4],
-                    fill: false,
+                    label: dataset.variable,
+                    data: dataset.values,
+                    borderColor: 'rgba(102, 126, 234, 0.3)', // Línea tenue
+                    backgroundColor: pointColors,
+                    pointBackgroundColor: pointColors,
+                    pointRadius: pointRadii,
+                    borderWidth: 1,
+                    showLine: true // Scatter conectado
+                });
+
+                // Anotaciones para anomalías
+                chartOptions.plugins.annotation = {
+                    annotations: config.anomalies.map(ano => ({
+                        type: 'label',
+                        xValue: ano.date,
+                        yValue: ano.value, // Posición un poco arriba
+                        content: [ano.label],
+                        font: { size: 10 },
+                        color: ano.color,
+                        position: 'start',
+                        yAdjust: -10
+                    }))
+                };
+                break;
+
+            case 'line_area':
+                // Misión 4: SaaS
+                chartData.labels = dataset.dates;
+                chartData.datasets.push({
+                    label: dataset.variable,
+                    data: dataset.values,
+                    borderColor: config.color,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    fill: true,
+                    tension: 0.4,
                     pointRadius: 0
                 });
-            }
+                break;
+
+            case 'line_with_highlights':
+                // Misión 5: E-commerce Picos
+                chartData.labels = dataset.dates;
+                // Mapear colores de puntos según eventos
+                const highlightColors = dataset.values.map((v, i) => {
+                    const date = dataset.dates[i];
+                    const highlight = config.highlights.find(h => h.date === date);
+                    return highlight ? highlight.color : 'rgba(102, 126, 234, 0.5)';
+                });
+
+                const highlightRadius = dataset.values.map((v, i) => {
+                    const date = dataset.dates[i];
+                    return config.highlights.find(h => h.date === date) ? 6 : 0;
+                });
+
+                chartData.datasets.push({
+                    label: dataset.variable,
+                    data: dataset.values,
+                    borderColor: '#667eea',
+                    pointBackgroundColor: highlightColors,
+                    pointRadius: highlightRadius,
+                    tension: 0.2
+                });
+
+                // Anotaciones
+                chartOptions.plugins.annotation = {
+                    annotations: config.highlights.map(h => ({
+                        type: 'label',
+                        xValue: h.date,
+                        yValue: 'center', // Centrado o en el valor
+                        content: h.label,
+                        font: { size: 10 },
+                        color: h.color,
+                        position: 'start',
+                        yAdjust: -20
+                    }))
+                };
+                break;
+
+            case 'line_with_forecast':
+                // Misión 6: Forecasting
+                // Dataset Real (hasta Octubre/Nov)
+                // Cortamos datos para simular 'hoy'
+                const cutOffIndex = dataset.dates.indexOf('2022-10-31');
+                const realDates = dataset.dates.slice(0, cutOffIndex + 1);
+                const realValues = dataset.values.slice(0, cutOffIndex + 1);
+
+                // Forecast (Nov-Dic)
+                // Generamos proyección lineal simple
+                const forecastDates = ['2022-10-31', ...dataset.dates.slice(cutOffIndex + 1)]; // Conectar con último punto
+                const lastRealVal = realValues[realValues.length - 1];
+
+                // Generar datos ficticios de proyección lineal perfecta
+                const forecastValues = [lastRealVal];
+                for (let i = 1; i < forecastDates.length; i++) {
+                    forecastValues.push(lastRealVal + (i * 54)); // +54 diario (tendencia)
+                }
+
+                chartData.labels = dataset.dates; // Eje X completo
+
+                chartData.datasets.push({
+                    label: 'Ventas Reales',
+                    data: realValues, // Chart.js rellenará el resto con null si labels es más largo
+                    borderColor: '#667eea',
+                    tension: 0.3
+                });
+
+                chartData.datasets.push({
+                    label: 'Proyección (Tendencia)',
+                    data: new Array(realValues.length - 1).fill(null).concat(forecastValues), // Padding nulls
+                    borderColor: '#fbbf24', // Amarillo
+                    borderDash: [5, 5],
+                    pointRadius: 0
+                });
+                break;
         }
 
-        chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            }
-        };
-
+        // Renderizar Chart
         this.missionChart = new Chart(ctx, {
-            type: chartType,
+            type: config.type.includes('scatter') || config.type.includes('line') ? 'line' : config.type,
             data: chartData,
             options: chartOptions
         });
+    }
+
+    // Helpers para visualización
+    clearMissionVisual(wrapper) {
+        if (this.missionChart) {
+            this.missionChart.destroy();
+            this.missionChart = null;
+        }
+        wrapper.innerHTML = ''; // Limpiar todo (canvas o html previo)
+    }
+
+    createCanvas(wrapper) {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'missionChart';
+        wrapper.appendChild(canvas);
+        return canvas;
+    }
+
+    getBaseChartOptions(config) {
+        return {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: true, labels: { color: '#ccc' } },
+                tooltip: { mode: 'index', intersect: false },
+                annotation: { annotations: [] } // Inicializar vacío
+            },
+            scales: {
+                x: { ticks: { color: '#888' }, grid: { color: '#333' } },
+                y: { ticks: { color: '#888' }, grid: { color: '#333' } }
+            }
+        };
+    }
+
+    renderHtmlVisual(wrapper, config) {
+        let html = '';
+
+        if (config.type === 'comparison_dashboard') {
+            html = `
+                <div class="dashboard-grid">
+                    <div class="mini-chart-card">
+                        <h4>Retail</h4>
+                        <div class="mini-viz retail-pattern"></div>
+                        <p>Estacional + Anomalías</p>
+                    </div>
+                    <div class="mini-chart-card">
+                        <h4>SaaS</h4>
+                        <div class="mini-viz saas-pattern"></div>
+                        <p>Lineal / Suave</p>
+                    </div>
+                    <div class="mini-chart-card">
+                        <h4>E-commerce</h4>
+                        <div class="mini-viz ecom-pattern"></div>
+                        <p>Picos Extremos</p>
+                    </div>
+                </div>
+                <style>
+                    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; height: 100%; }
+                    .mini-chart-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; text-align: center; display: flex; flex-direction: column; }
+                    .mini-viz { flex: 1; margin: 10px 0; background-size: cover; opacity: 0.8; border-radius: 4px; }
+                    .retail-pattern { background: linear-gradient(to right, transparent 0%, #667eea 20%, transparent 40%, #667eea 60%, transparent 80%); }
+                    .saas-pattern { background: linear-gradient(45deg, transparent, #667eea); }
+                    .ecom-pattern { background: linear-gradient(to right, transparent 0%, transparent 80%, #ff0000 90%, transparent 100%); }
+                </style>
+            `;
+        } else if (config.type === 'business_kpis') {
+            html = `
+                <div class="kpi-container">
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="ri-store-2-line"></i></div>
+                        <h3>Retail KPI</h3>
+                        <div class="kpi-value text-red">Rotación Stock</div>
+                        <p>Crítico por estacionalidad semanal</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="ri-cloud-line"></i></div>
+                        <h3>SaaS KPI</h3>
+                        <div class="kpi-value text-blue">Churn Rate</div>
+                        <p>Crítico para modelo recurrente</p>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon"><i class="ri-shopping-cart-line"></i></div>
+                        <h3>E-com KPI</h3>
+                        <div class="kpi-value text-green">Conversión</div>
+                        <p>Crítico durante picos de tráfico</p>
+                    </div>
+                </div>
+                <style>
+                    .kpi-container { display: flex; justify-content: space-around; align-items: center; height: 100%; gap: 1rem; }
+                    .kpi-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; width: 30%; border: 1px solid rgba(255,255,255,0.1); }
+                    .kpi-icon { font-size: 2rem; margin-bottom: 0.5rem; color: #667eea; }
+                    .kpi-value { font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0; }
+                    .text-red { color: #f87171; } .text-blue { color: #60a5fa; } .text-green { color: #4ade80; }
+                </style>
+            `;
+        } else if (config.type === 'strategic_roadmap') {
+            html = `
+                <div class="roadmap-table-container">
+                    <table class="roadmap-table">
+                        <thead>
+                            <tr>
+                                <th>Q</th>
+                                <th>Retail 🏪</th>
+                                <th>SaaS ☁️</th>
+                                <th>E-commerce 🛒</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Q1</td>
+                                <td>Limpieza Stock</td>
+                                <td><strong>Onboarding 🚀</strong></td>
+                                <td>SEO / Contenido</td>
+                            </tr>
+                            <tr>
+                                <td>Q2</td>
+                                <td>Planificación</td>
+                                <td>Features Nuevas</td>
+                                <td>Prep. Prime Day</td>
+                            </tr>
+                            <tr>
+                                <td>Q3</td>
+                                <td>Compras Navidad</td>
+                                <td>Enterprise Sales</td>
+                                <td>Campañas Ads</td>
+                            </tr>
+                            <tr>
+                                <td>Q4</td>
+                                <td><strong>VENTA TOTAL 💰</strong></td>
+                                <td>Retención</td>
+                                <td><strong>BLACK FRIDAY 🔥</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <style>
+                    .roadmap-table-container { height: 100%; overflow: auto; padding: 10px; }
+                    .roadmap-table { width: 100%; border-collapse: collapse; color: #eee; font-size: 0.9rem; }
+                    .roadmap-table th, .roadmap-table td { border: 1px solid #444; padding: 10px; text-align: center; }
+                    .roadmap-table th { background: rgba(102, 126, 234, 0.2); }
+                    strong { color: #fbbf24; }
+                </style>
+            `;
+        }
+
+        wrapper.innerHTML = html;
     }
 
     // ========================================================

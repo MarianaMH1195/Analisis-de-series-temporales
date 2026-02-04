@@ -1,24 +1,24 @@
 // ============================================================
-// DETECTIVE DE DATOS - DEFINICIÓN DE MISIONES
-// 7 Misiones con progresión de dificultad
+// DETECTIVE DE DATOS - DEFINICIÓN DE MISIONES (V2 REFACTORIZADA)
+// 7 Misiones con coherencia total, gráficos específicos y narrativa sólida.
 // ============================================================
 
 const missionsData = [
     // ========================================================
-    // MISIÓN 1: Tendencia Básica
+    // MISIÓN 1: Retail Tendencia (⭐ Fácil)
     // ========================================================
     {
         id: 1,
-        title: "El Caso Retail 2022",
+        title: "Caso Retail 2022",
         subtitle: "Investigación de Tendencia",
+        narrative: "Eres analista junior en ChainMart Retail Inc. Tu primer caso: investigar las ventas de 2022. ¿Qué dirección general muestran los datos?",
+
         difficulty: 1,
         stars: "<i class='ri-star-fill'></i>",
         duration: "3-5 min",
         xpReward: 100,
-        dataset: 'retail',
+        dataset: "retail",
         icon: "<i class='ri-archive-line'></i>",
-
-        narrative: `Eres analista junior en ChainMart Retail Inc. Tu primer caso: investigar las ventas de 2022. ¿Qué dirección general muestran los datos?`,
 
         objectives: [
             "Observar el gráfico completo de 304 días",
@@ -38,7 +38,7 @@ const missionsData = [
                     { value: "stable", text: "➡️ Estable (Plano)", correct: false }
                 ],
                 correctAnswer: "uptrend",
-                explanation: "Las ventas crecen de 6.4K a 33K unidades, mostrando una tendencia claramente creciente (+265%). Esto indica un negocio en expansión.",
+                explanation: "Las ventas crecen de 6.4K a 33K unidades (+265%). Esto indica un negocio en expansión.",
                 hints: [
                     "Compara el inicio (enero) con el final (octubre)",
                     "¿Los valores suben, bajan o se mantienen?",
@@ -48,9 +48,10 @@ const missionsData = [
         ],
 
         chartConfig: {
-            type: 'line',
-            showTrendLine: true,
-            annotations: []
+            type: "line",
+            title: "Ventas Diarias 2022 (304 días)",
+            showTrendLine: false,
+            color: "#667eea"
         },
 
         reward: {
@@ -61,20 +62,20 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 2: Estacionalidad
+    // MISIÓN 2: Patrón Semanal (⭐⭐ Fácil-Media)
     // ========================================================
     {
         id: 2,
         title: "El Patrón Semanal",
         subtitle: "Estacionalidad Detectada",
+        narrative: "Los datos muestran un patrón recurrente. ¿Como varía el comportamiento durante la semana?",
+
         difficulty: 2,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "3-5 min",
         xpReward: 150,
-        dataset: 'retail',
+        dataset: "retail",
         icon: "<i class='ri-refresh-line'></i>",
-
-        narrative: `Los datos muestran un patrón recurrente. ¿Cada cuántos días se repite el comportamiento? Pista: Piensa en cómo varía el comportamiento de compra durante la semana.`,
 
         objectives: [
             "Analizar el gráfico de barras por día de semana",
@@ -86,30 +87,29 @@ const missionsData = [
             {
                 id: "m2_q1",
                 type: "number",
-                title: "¿Cuál es el período de estacionalidad (en días)?",
-                description: "¿Cada cuántos días se repite el patrón de ventas?",
+                title: "¿Cada cuántos días se repite el patrón (período)?",
+                description: "Observa la estructura cíclica.",
                 correctAnswer: 7,
                 acceptedRange: null,
-                explanation: "El patrón se repite cada 7 días (semanal). Sábado tiene las ventas más altas y domingo las más bajas.",
+                explanation: "El patrón es SEMANAL (7 días). Se repite cada semana con máximos el sábado y mínimos el domingo.",
                 hints: [
-                    "Piensa en los ciclos naturales del comercio",
                     "¿Cuántos días tiene una semana?",
-                    "El comportamiento de compra varía según el día de la semana"
+                    "Piensa en los ciclos naturales del comercio"
                 ]
             },
             {
                 id: "m2_q2",
                 type: "select",
-                title: "¿Qué día tiene las ventas más ALTAS?",
-                description: "Observa el gráfico de barras.",
+                title: "¿En qué día se venden más unidades?",
+                description: "Observa las barras más altas.",
                 options: [
-                    { value: "lunes", text: "Lunes", correct: false },
-                    { value: "viernes", text: "Viernes", correct: false },
-                    { value: "sabado", text: "Sábado", correct: true },
-                    { value: "domingo", text: "Domingo", correct: false }
+                    { value: "friday", text: "Viernes", correct: false },
+                    { value: "saturday", text: "Sábado", correct: true },
+                    { value: "sunday", text: "Domingo", correct: false },
+                    { value: "monday", text: "Lunes", correct: false }
                 ],
-                correctAnswer: "sabado",
-                explanation: "El sábado tiene el pico de ventas (~16,100 unidades). Las personas tienen más tiempo libre para comprar.",
+                correctAnswer: "saturday",
+                explanation: "Sábado es el día de máximas ventas (~16.1K). Las personas tienen más tiempo libre para comprar.",
                 hints: [
                     "Busca la barra más alta en el gráfico",
                     "¿Cuándo tienen las personas más tiempo libre?"
@@ -118,8 +118,9 @@ const missionsData = [
         ],
 
         chartConfig: {
-            type: 'bar',
-            labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+            type: "bar",
+            title: "Promedio de Ventas por Día de Semana",
+            labels: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
             highlightMax: true,
             useWeeklyData: true
         },
@@ -132,69 +133,70 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 3: Anomalías
+    // MISIÓN 3: Anomalías Visibles (⭐⭐ Fácil-Media)
     // ========================================================
     {
         id: 3,
         title: "Eventos Especiales",
-        subtitle: "Anomalías en el Dataset",
+        subtitle: "Anomalías Claras",
+        narrative: "Algunos días los datos se desviaron SIGNIFICATIVAMENTE del patrón normal. Detecta estos eventos especiales.",
+
         difficulty: 2,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "4-6 min",
         xpReward: 150,
-        dataset: 'retail',
+        dataset: "retail",
         icon: "<i class='ri-alarm-warning-line'></i>",
 
-        narrative: `Algunos días los datos se desviaron significativamente del patrón normal. ¿Cuántos eventos anómalos puedes identificar? Busca desviaciones de más del 15% del patrón normal.`,
-
         objectives: [
-            "Identificar puntos que se desvían del patrón",
-            "Contar las anomalías significativas",
-            "Asociar las anomalías con eventos del mundo real"
+            "Identificar puntos rojos (anomalías) en el gráfico",
+            "Contar eventos significativos",
+            "Asociar anomalías con eventos reales"
         ],
 
         questions: [
             {
                 id: "m3_q1",
                 type: "number",
-                title: "¿Cuántas anomalías significativas detectas?",
-                description: "Cuenta los puntos que se desvían notablemente del patrón.",
+                title: "¿Cuántos eventos especiales (anomalías) identificas?",
+                description: "Cuenta los puntos rojos y etiquetas marcadas.",
                 correctAnswer: 4,
                 acceptedRange: [3, 5],
-                explanation: "Hay 4 anomalías principales: Año Nuevo (-58%), Día del Trabajo x2 (-11%, -12%), y Halloween (+50%).",
+                explanation: "4 eventos principales marcados: Año Nuevo (caída), Día del Trabajo (caída), Puente (caída) y Halloween (subida).",
                 hints: [
-                    "Busca picos o caídas muy pronunciadas",
-                    "Piensa en festivos importantes del año",
-                    "Las anomalías pueden ser positivas O negativas"
+                    "Busca los puntos destacados en ROJO",
+                    "Hay eventos tanto positivos como negativos"
                 ]
             },
             {
                 id: "m3_q2",
                 type: "select",
-                title: "¿Cuál crees que es la anomalía MÁS grande?",
-                description: "Identifica el evento con mayor impacto.",
+                title: "¿Qué evento causó la MAYOR CAÍDA?",
+                description: "Busca el punto más bajo del año.",
                 options: [
-                    { value: "newyear", text: "1 Enero - Año Nuevo", correct: true },
-                    { value: "labor", text: "1 Mayo - Día del Trabajo", correct: false },
-                    { value: "halloween", text: "31 Octubre - Halloween", correct: false },
-                    { value: "summer", text: "Vacaciones de verano", correct: false }
+                    { value: "newyear", text: "Año Nuevo (01-01)", correct: true },
+                    { value: "laborday", text: "Día del Trabajo (05-01)", correct: false },
+                    { value: "halloween", text: "Halloween (10-31)", correct: false },
+                    { value: "other", text: "Otro evento", correct: false }
                 ],
                 correctAnswer: "newyear",
-                explanation: "Año Nuevo tuvo una caída del 58%, la mayor del dataset. Las tiendas cierran o tienen horario reducido.",
+                explanation: "Año Nuevo tuvo una caída del 58% (solo 2,950 ventas). Es el día con menor actividad del año.",
                 hints: [
-                    "Busca el punto más bajo en enero",
-                    "¿Cuándo están las tiendas cerradas?"
+                    "Mira el inicio del año en el gráfico",
+                    "¿Qué día está más abajo en el eje Y?"
                 ]
             }
         ],
 
         chartConfig: {
-            type: 'line',
-            showAnomalies: true,
-            annotations: [
-                { date: '2022-01-01', label: '¿?' },
-                { date: '2022-05-01', label: '¿?' },
-                { date: '2022-10-31', label: '¿?' }
+            type: "scatter_anomaly",
+            title: "Anomalías en Serie Temporal 2022",
+            showAnnotation: true,
+            anomalies: [
+                { date: '2022-01-01', label: 'Año Nuevo', value: 2950, color: 'red' },
+                { date: '2022-05-01', label: 'Día Trabajo', value: 15800, color: 'red' },
+                { date: '2022-05-02', label: 'Promo', value: 15400, color: 'red' },
+                { date: '2022-10-31', label: 'Halloween', value: 39500, color: 'green' }
             ]
         },
 
@@ -206,84 +208,68 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 4: SaaS (Nuevo Contexto)
+    // MISIÓN 4: SaaS Metrics (⭐⭐⭐ Media)
     // ========================================================
     {
         id: 4,
-        title: "Caso SaaS",
-        subtitle: "Usuarios Activos Mensuales",
+        title: "Caso SaaS: ProductAPI",
+        subtitle: "Usuarios Activos en Expansión",
+        narrative: "Nuevo contexto: ProductAPI Inc. (B2B SaaS). Analiza el crecimiento de Usuarios Activos Mensuales (MAU).",
+
         difficulty: 3,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "5-7 min",
         xpReward: 200,
-        dataset: 'saas',
+        dataset: "saas",
         icon: "<i class='ri-computer-line'></i>",
 
-        narrative: `Ascenso rápido. Nuevo caso: ProductAPI Inc. Analiza el crecimiento de usuarios activos (MAU) durante 2023. Este es un contexto diferente al retail. ¿Qué patrones ves?`,
-
         objectives: [
-            "Aplicar conocimientos previos a nuevo contexto",
-            "Identificar diferencias entre retail y SaaS",
-            "Calcular el crecimiento porcentual"
+            "Analizar crecimiento en un contexto diferente (SaaS)",
+            "Identificar patrones lineales/exponenciales",
+            "Calcular crecimiento anual"
         ],
 
         questions: [
             {
                 id: "m4_q1",
                 type: "select",
-                title: "¿Qué tipo de crecimiento muestra el dataset?",
-                description: "Analiza la forma de la curva de crecimiento.",
+                title: "¿Cuál es el patrón principal de crecimiento?",
+                description: "Observa la forma de la curva y el área sombreada.",
                 options: [
-                    { value: "linear", text: "📈 Crecimiento lineal (constante)", correct: false },
-                    { value: "exponential", text: "🚀 Crecimiento acelerado (exponencial)", correct: true },
-                    { value: "declining", text: "📉 Crecimiento decreciente", correct: false },
-                    { value: "stable", text: "➡️ Estable", correct: false }
+                    { value: "linear", text: "📈 Crecimiento Lineal Constante", correct: true },
+                    { value: "exponential", text: "🚀 Crecimiento Exponencial Explosivo", correct: false },
+                    { value: "cyclical", text: "🔄 Ciclos de Crecimiento y Caída", correct: false },
+                    { value: "stable", text: "➡️ Estable sin cambios", correct: false }
                 ],
-                correctAnswer: "exponential",
-                explanation: "SaaS típicamente muestra crecimiento exponencial. Cada nuevo usuario trae más usuarios (efecto red).",
+                correctAnswer: "linear",
+                explanation: "SaaS B2B suele mostrar un crecimiento constante y predecible (lineal o ligeramente acelerado), sin la volatilidad diaria del retail.",
                 hints: [
-                    "Compara la pendiente al inicio vs al final",
-                    "¿El crecimiento es más rápido hacia el final?"
+                    "¿La línea sube de forma constante?",
+                    "No hay picos o caídas bruscas como en retail"
                 ]
             },
             {
                 id: "m4_q2",
                 type: "number",
-                title: "Estima el crecimiento total en porcentaje (%)",
-                description: "De 8,200 usuarios a 30,000 usuarios.",
-                correctAnswer: 266,
-                acceptedRange: [250, 280],
-                explanation: "Crecimiento: (30,000 - 8,200) / 8,200 × 100 = 266%",
+                title: "¿Cuál es el crecimiento aproximado en % (Ene-Dic)?",
+                description: "Inicio: ~8.2K. Final: ~18.9K.",
+                correctAnswer: 130,
+                acceptedRange: [120, 140],
+                explanation: "De 8.2K a 18.9K es un aumento de ~130%. ((18.9-8.2)/8.2 * 100).",
                 hints: [
-                    "Fórmula: (Final - Inicial) / Inicial × 100",
-                    "(30000 - 8200) / 8200 = ?",
-                    "El resultado está entre 250% y 280%"
-                ]
-            },
-            {
-                id: "m4_q3",
-                type: "select",
-                title: "¿Cómo difiere este patrón del retail?",
-                description: "Compara con lo aprendido en misiones anteriores.",
-                options: [
-                    { value: "less_seasonal", text: "Menos estacionalidad semanal", correct: true },
-                    { value: "more_volatile", text: "Más volatilidad diaria", correct: false },
-                    { value: "same", text: "Es igual al retail", correct: false },
-                    { value: "declining", text: "Tendencia opuesta", correct: false }
-                ],
-                correctAnswer: "less_seasonal",
-                explanation: "SaaS B2B tiene menos estacionalidad semanal porque los usuarios son empresas que operan todos los días.",
-                hints: [
-                    "¿Hay patrón de fines de semana?",
-                    "Las empresas trabajan diferente que consumidores"
+                    "Fórmula: (Final - Inicial) / Inicial * 100",
+                    "(18900 - 8200) / 8200 = ?",
+                    "Es un poco más del doble (100%)"
                 ]
             }
         ],
 
         chartConfig: {
-            type: 'line',
-            showTrendLine: true,
-            color: '#10b981'
+            type: "line_area",
+            title: "Usuarios Activos Mensuales (MAU) 2023",
+            fill: true,
+            color: "#667eea",
+            showTrendLine: true
         },
 
         reward: {
@@ -294,86 +280,89 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 5: E-commerce (Volatilidad Alta)
+    // MISIÓN 5: E-commerce con Picos (⭐⭐⭐ Media)
     // ========================================================
     {
         id: 5,
-        title: "Tráfico E-commerce",
-        subtitle: "Caso de Alta Volatilidad",
+        title: "Caso E-commerce",
+        subtitle: "Tráfico con Picos Claros",
+        narrative: "NeoStore - Tienda Online. El gráfico muestra tráfico diario con eventos especiales muy marcados.",
+
         difficulty: 3,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "6-8 min",
         xpReward: 250,
-        dataset: 'ecommerce',
+        dataset: "ecommerce",
         icon: "<i class='ri-shopping-cart-2-line'></i>",
 
-        narrative: `Nuevo desafío: ShopHub Inc., plataforma e-commerce. Analiza el tráfico web diario. ⚠️ Advertencia: Este dataset es MUCHO más volátil. Habrá picos y caídas. ¿Puedes identificar los patrones?`,
-
         objectives: [
-            "Manejar datos con alta volatilidad",
-            "Identificar eventos especiales (Black Friday, etc.)",
-            "Separar ruido de señal"
+            "Gestionar alta volatilidad",
+            "Identificar impacto de eventos (Black Friday, Navidad)",
+            "Distinguir temporadas altas"
         ],
 
         questions: [
             {
                 id: "m5_q1",
                 type: "select",
-                title: "¿Qué patrón principal ves?",
-                description: "Mira más allá del ruido diario.",
+                title: "¿Cuál es la característica principal del tráfico?",
+                description: "Compara con el caso SaaS anterior.",
                 options: [
-                    { value: "stable", text: "Tendencia estable sin cambios", correct: false },
-                    { value: "growth_volatile", text: "📈 Crecimiento con alta volatilidad", correct: true },
+                    { value: "stable", text: "Estable y predecible", correct: false },
+                    { value: "volatile_growth", text: "📈 Crecimiento con alta volatilidad (picos)", correct: true },
                     { value: "declining", text: "Tendencia a la baja", correct: false },
-                    { value: "random", text: "Completamente aleatorio", correct: false }
+                    { value: "cyclical", text: "Solo ciclos semanales", correct: false }
                 ],
-                correctAnswer: "growth_volatile",
-                explanation: "Hay tendencia creciente (+265%) pero con alta volatilidad. Los picos corresponden a eventos de ventas.",
+                correctAnswer: "volatile_growth",
+                explanation: "E-commerce tiene crecimiento base pero con PICOS DRAMÁTICOS en fechas especiales (San Valentín, Prime Day, Navidad).",
                 hints: [
-                    "Ignora las fluctuaciones individuales",
-                    "¿La línea general sube o baja?",
-                    "E-commerce tiene muchos eventos promocionales"
+                    "Fíjate en los picos agudos de colores",
+                    "¿Es una línea suave o una montaña rusa?"
                 ]
             },
             {
                 id: "m5_q2",
-                type: "number",
-                title: "¿Cuántos picos significativos (>30% sobre promedio) detectas?",
-                description: "Cuenta los eventos con impacto mayor al 30%.",
-                correctAnswer: 5,
-                acceptedRange: [4, 7],
-                explanation: "~5 picos principales: San Valentín, Prime Day, Black Friday, Cyber Monday, Navidad.",
+                type: "select",
+                title: "¿En qué período se observan los MAYORES PICOS?",
+                description: "Observa dónde se concentran las barras más altas.",
+                options: [
+                    { value: "spring", text: "Primavera (Feb-Abr)", correct: false },
+                    { value: "summer", text: "Verano (Jun-Ago)", correct: false },
+                    { value: "winter", text: "Invierno (Nov-Dic)", correct: true },
+                    { value: "fall", text: "Otoño (Sep-Oct)", correct: false }
+                ],
+                correctAnswer: "winter",
+                explanation: "Invierno (Q4) tiene Black Friday, Cyber Monday y Navidad. Es, por lejos, la temporada más fuerte.",
                 hints: [
-                    "Busca los picos más pronunciados",
-                    "Piensa en eventos comerciales importantes",
-                    "Black Friday, Cyber Monday, Navidad..."
+                    "Busca la concentración de picos al final del año",
+                    "Black Friday y Navidad están en..."
                 ]
             },
             {
                 id: "m5_q3",
-                type: "select",
-                title: "¿Cuál es el evento con mayor impacto?",
-                description: "Identifica el pico más grande del año.",
-                options: [
-                    { value: "valentine", text: "💝 San Valentín", correct: false },
-                    { value: "prime", text: "📦 Prime Day (Julio)", correct: false },
-                    { value: "blackfriday", text: "🛍️ Black Friday", correct: true },
-                    { value: "christmas", text: "🎄 Navidad", correct: false }
-                ],
-                correctAnswer: "blackfriday",
-                explanation: "Black Friday genera el pico más alto (~85% sobre promedio). Es el evento de ventas más importante del año.",
+                type: "number",
+                title: "¿Cuántos EPICENTROS de ventas (>100% pico) ves?",
+                description: "Cuenta los eventos mayores etiquetados en el gráfico.",
+                correctAnswer: 5,
+                acceptedRange: [4, 6],
+                explanation: "5 Eventos Principales: San Valentín, Prime Day, Black Friday, Cyber Monday y Navidad.",
                 hints: [
-                    "Busca el pico máximo en noviembre",
-                    "¿Cuál es el día de más ventas en retail mundial?"
+                    "Cuenta las etiquetas de colores en el gráfico",
+                    "Son los momentos clave del año comercial"
                 ]
             }
         ],
 
         chartConfig: {
-            type: 'line',
-            showEvents: true,
-            color: '#f59e0b',
-            volatileStyle: true
+            type: "line_with_highlights",
+            title: "Tráfico Web Diario con Eventos",
+            highlights: [
+                { date: '2023-02-14', label: "San Valentín", color: '#ff69b4' },
+                { date: '2023-07-11', label: "Prime Day", color: '#ff9900' },
+                { date: '2023-11-24', label: "Black Friday", color: '#ff0000' },
+                { date: '2023-11-27', label: "Cyber Monday", color: '#0066ff' },
+                { date: '2023-12-25', label: "Navidad", color: '#00dd00' }
+            ]
         },
 
         reward: {
@@ -384,81 +373,66 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 6: Predicción (Forecasting)
+    // MISIÓN 6: Forecasting Deducible (⭐⭐⭐⭐ Difícil)
     // ========================================================
     {
         id: 6,
-        title: "Predicción Avanzada",
-        subtitle: "Forecasting de Ventas",
+        title: "Proyección Retail",
+        subtitle: "Forecasting Lógico",
+        narrative: "Usando los patrones de 2022, predice el futuro inmediato. La línea amarilla muestra la proyección matemática simple.",
+
         difficulty: 4,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "8-10 min",
         xpReward: 300,
-        dataset: 'retail',
+        dataset: "retail",
         icon: "<i class='ri-magic-line'></i>",
 
-        narrative: `Próxima etapa: predicción. Usando el caso Retail 2022, predice las ventas de noviembre y diciembre. No es adivinación - usa los patrones que identificaste: tendencia creciente, estacionalidad semanal, eventos especiales.`,
-
         objectives: [
-            "Aplicar todos los conceptos aprendidos",
-            "Hacer predicciones basadas en datos",
-            "Considerar factores estacionales"
+            "Leer una proyección de tendencia (línea amarilla)",
+            "Ajustar proyecciones por estacionalidad (Navidad)",
+            "Deducir valores futuros del gráfico"
         ],
 
         questions: [
             {
                 id: "m6_q1",
                 type: "number",
-                title: "¿Cuál sería el PROMEDIO de ventas en NOVIEMBRE 2022?",
-                description: "Último dato octubre: ~33,000 unidades. Tendencia: +53.8/día.",
+                title: "¿Promedio esperado para NOVIEMBRE 2022?",
+                description: "Mira la línea de proyección amarilla para Noviembre. (Tendencia base)",
                 correctAnswer: 35000,
-                acceptedRange: [32000, 38000],
-                explanation: "Continuando la tendencia: ~35,000 unidades promedio en noviembre.",
+                acceptedRange: [34000, 36000],
+                explanation: "Siguiendo la tendencia lineal mostrada (+53.8/día), noviembre promedia ~35,000 unidades.",
                 hints: [
-                    "Último valor octubre ≈ 33,000",
-                    "Tendencia diaria ≈ +54 unidades",
-                    "30 días × 54 = +1,620 unidades más"
+                    "Sigue la línea punteada amarilla",
+                    "El valor está un poco por encima del final de octubre"
                 ]
             },
             {
                 id: "m6_q2",
-                type: "number",
-                title: "¿Cuál sería el PROMEDIO de ventas en DICIEMBRE 2022?",
-                description: "Considera el efecto de Navidad (+15-20% típico).",
-                correctAnswer: 42000,
-                acceptedRange: [38000, 46000],
-                explanation: "Tendencia base ~37K + efecto Navidad (+15%) = ~42,000 unidades.",
-                hints: [
-                    "Navidad aumenta las ventas significativamente",
-                    "Aplica un factor de +15% a +20%",
-                    "Base ~37K × 1.15 = ?"
-                ]
-            },
-            {
-                id: "m6_q3",
                 type: "select",
-                title: "¿Qué factor afectaría MÁS el pronóstico de diciembre?",
-                description: "Elige el factor con mayor impacto.",
+                title: "Si aplicamos efecto Navidad (+20%), ¿para Diciembre?",
+                description: "Proyección base (~37K) + Bonus Navidad.",
                 options: [
-                    { value: "trend", text: "📈 La tendencia creciente", correct: false },
-                    { value: "weekly", text: "🔄 Patrón semanal", correct: false },
-                    { value: "holiday", text: "🎄 Navidad y fin de año", correct: true },
-                    { value: "inventory", text: "📦 Nivel de inventario", correct: false }
+                    { value: "37000", text: "~37.0K (Igual a tendencia)", correct: false },
+                    { value: "40000", text: "~40.0K (Ligero aumento)", correct: false },
+                    { value: "44000", text: "~44.0K (Aumento fuerte esperado)", correct: true },
+                    { value: "30000", text: "~30.0K (Bajada)", correct: false }
                 ],
-                correctAnswer: "holiday",
-                explanation: "Los eventos especiales (Navidad) tienen mayor impacto que la tendencia regular. Pueden aumentar ventas 20-50%.",
+                correctAnswer: "44000",
+                explanation: "Tendencia base diciembre (~37K) + 20% Navidad (~7.4K) = ~44.4K. Navidad rompe la tendencia lineal hacia arriba.",
                 hints: [
-                    "¿Qué causa los mayores picos en el año?",
-                    "Eventos especiales > tendencia regular"
+                    "Calcula el 20% de 37,000",
+                    "Súmalo al valor base"
                 ]
             }
         ],
 
         chartConfig: {
-            type: 'line',
-            showTrendLine: true,
-            showForecast: true,
-            forecastMonths: ['Nov', 'Dic']
+            type: "line_with_forecast",
+            title: "Proyección de Ventas: Nov-Dic",
+            forecastStart: "2022-11-01",
+            forecastEnd: "2022-12-31"
         },
 
         reward: {
@@ -469,106 +443,89 @@ const missionsData = [
     },
 
     // ========================================================
-    // MISIÓN 7: Análisis Estratégico (Capstone)
+    // MISIÓN 7: Business Intelligence (⭐⭐⭐⭐⭐ Capstone)
     // ========================================================
     {
         id: 7,
-        title: "Análisis Estratégico",
-        subtitle: "Caso Capstone Final",
+        title: "Informe Ejecutivo Final",
+        narrative: "Eres Senior Analyst. Presenta tus conclusiones estratégicas comparando las 3 industrias.",
+
         difficulty: 5,
         stars: "<i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i><i class='ri-star-fill'></i>",
         duration: "10-12 min",
         xpReward: 500,
-        dataset: 'retail',
+        dataset: "retail", // Placeholder, usa datos de todos
         icon: "<i class='ri-graduation-cap-line'></i>",
 
-        narrative: `Última misión de rango junior. Has dominado: tendencia, estacionalidad, anomalías, volatilidad, forecasting. Ahora: análisis estratégico COMPLETO. Toma decisiones de negocio basadas en datos. Esto determina si asciendes a Analista Senior.`,
-
         objectives: [
-            "Combinar todos los conceptos aprendidos",
-            "Tomar decisiones estratégicas basadas en datos",
-            "Demostrar pensamiento analítico empresarial"
+            "Comparar patrones de diferentes industrias",
+            "Elegir métricas (KPIs) adecuadas para cada una",
+            "Recomendar estrategias basadas en datos"
         ],
 
         questions: [
             {
                 id: "m7_q1",
                 type: "select",
-                title: "Escenario 1: ChainMart quiere optimizar inventario. ¿Cómo distribuirlo?",
-                description: "Basándote en el patrón semanal identificado.",
+                title: "¿Cuál es la insight CRÍTICA comparativa?",
+                description: "Mira los 3 gráficos en el dashboard.",
                 options: [
-                    { value: "equal", text: "Distribuir igual todos los días", correct: false },
-                    { value: "weekend", text: "Concentrar en viernes-sábado (patrón semanal)", correct: true },
-                    { value: "seasonal", text: "Solo para noviembre-diciembre", correct: false },
-                    { value: "monday", text: "Concentrar en lunes-martes", correct: false }
+                    { value: "all_same", text: "Todos son iguales", correct: false },
+                    { value: "patterns_differ", text: "Cada industria tiene patrones ÚNICOS", correct: true },
+                    { value: "seasonality", text: "La estacionalidad es clave en todos", correct: false }
                 ],
-                correctAnswer: "weekend",
-                explanation: "El patrón semanal muestra 13% más ventas en fines de semana. Optimizar inventario para estos días maximiza ventas.",
+                correctAnswer: "patterns_differ",
+                explanation: "RETAIL: Estacionalidad semanal. SAAS: Lineal/Suave. E-COMMERCE: Volatilidad extrema. Requieren estrategias distintas.",
                 hints: [
-                    "Recuerda la Misión 2: ¿qué días venden más?",
-                    "El inventario debe estar donde se vende"
+                    "Compara las formas de las curvas",
+                    "Uno es sierra, otro suave, otro picos locos"
                 ]
             },
             {
                 id: "m7_q2",
                 type: "select",
-                title: "Escenario 2: ¿Cuándo lanzar promociones?",
-                description: "Estrategia óptima de marketing.",
+                title: "¿Métrica clave para cada industria?",
+                description: "Relaciona la industria con su driver principal.",
                 options: [
-                    { value: "always", text: "Todos los días igual", correct: false },
-                    { value: "high", text: "Viernes-sábado (días altos)", correct: false },
-                    { value: "low", text: "Lunes-martes (compensar días bajos)", correct: true },
-                    { value: "random", text: "Aleatoriamente", correct: false }
+                    { value: "revenue", text: "Ingresos totales para todos", correct: false },
+                    { value: "specific", text: "Retail: Rotación | SaaS: Retención | E-com: Conversión", correct: true },
+                    { value: "traffic", text: "Tráfico web para todos", correct: false }
                 ],
-                correctAnswer: "low",
-                explanation: "Las promociones son más efectivas en días bajos (lunes-martes) para suavizar la demanda y aprovechar capacidad.",
+                correctAnswer: "specific",
+                explanation: "Retail cuida inventario. SaaS vive de la retención (MRR). E-commerce depende de convertir tráfico volátil.",
                 hints: [
-                    "¿Cuándo necesitas más impulso?",
-                    "Compensa los días de menor actividad"
+                    "¿Qué mata a una empresa SaaS? (Churn)",
+                    "¿Qué mata al Retail? (Stock parado)"
                 ]
             },
             {
                 id: "m7_q3",
-                type: "number",
-                title: "Presupuesto de 100K para staffing. ¿Qué % asignar a viernes-sábado?",
-                description: "Proporcional a las ventas de esos días.",
-                correctAnswer: 40,
-                acceptedRange: [35, 45],
-                explanation: "Vie+Sáb = ~31,600 de ~112,300 semanal = 28%. Pero necesitas +40% por picos de demanda.",
-                hints: [
-                    "Vie: 15,500 + Sáb: 16,100 = 31,600",
-                    "Total semanal ≈ 112,300",
-                    "Necesitas margen para picos"
-                ]
-            },
-            {
-                id: "m7_q4",
                 type: "select",
-                title: "¿Cuál es el PRINCIPAL insight de todo el análisis?",
-                description: "El aprendizaje más importante.",
+                title: "Recomendación Estratégica para el próximo año",
+                description: "¿Dónde invertir presupuesto?",
                 options: [
-                    { value: "trend", text: "La tendencia siempre es positiva", correct: false },
-                    { value: "patterns", text: "Los patrones de datos guían decisiones estratégicas", correct: true },
-                    { value: "events", text: "Solo importan los eventos especiales", correct: false },
-                    { value: "random", text: "Los datos son impredecibles", correct: false }
+                    { value: "same", text: "Igual para todos", correct: false },
+                    { value: "strategy", text: "Retail: Q4 Stock | SaaS: Q1 Onboarding | E-com: Q4 Marketing", correct: true },
+                    { value: "random", text: "Invertir cuando haya dinero", correct: false }
                 ],
-                correctAnswer: "patterns",
-                explanation: "El análisis de patrones (tendencia, estacionalidad, anomalías) transforma datos en decisiones estratégicas de negocio.",
+                correctAnswer: "strategy",
+                explanation: "Preparar inventario Retail y Marketing E-commerce para Q4 (picos). En SaaS, aprovechar el inicio de año para captar (tendencia lineal).",
                 hints: [
-                    "¿Qué aprendiste en las 7 misiones?",
-                    "Datos → Patrones → Decisiones"
+                    "¿Cuándo vende más el Retail y E-com?",
+                    "Prepara la inversión para esos momentos"
                 ]
             }
         ],
 
         chartConfig: {
-            type: 'multi',
-            showAllPatterns: true
+            type: "comparison_dashboard",
+            title: "Dashboard Estratégico Comparativo",
+            showKPIs: true
         },
 
         reward: {
-            achievement: "🎓 Ascenso a Senior",
-            achievementDesc: "Has dominado el análisis de series temporales",
+            achievement: "🎓 Senior Analyst",
+            achievementDesc: "Maestro del análisis temporal",
             unlock: null,
             special: "diploma"
         }
@@ -586,7 +543,7 @@ const achievements = [
     { id: 4, icon: "<i class='ri-computer-line'></i>", name: "Analista SaaS", desc: "Dominas múltiples contextos", mission: 4 },
     { id: 5, icon: "<i class='ri-bar-chart-2-line'></i>", name: "Experto en Volatilidad", desc: "Separas señal de ruido", mission: 5 },
     { id: 6, icon: "<i class='ri-magic-line'></i>", name: "Profeta de Datos", desc: "Predices el futuro con datos", mission: 6 },
-    { id: 7, icon: "<i class='ri-graduation-cap-line'></i>", name: "Ascenso a Senior", desc: "Maestro del análisis temporal", mission: 7 }
+    { id: 7, icon: "<i class='ri-graduation-cap-line'></i>", name: "Senior Analyst", desc: "Maestro del análisis temporal", mission: 7 }
 ];
 
 // ============================================================
@@ -602,4 +559,4 @@ const ranks = [
     { level: 5, name: "Master Detective", minXP: 1650, icon: "<i class='ri-trophy-line'></i>" }
 ];
 
-const TOTAL_XP = 1650; // Suma de todas las misiones
+const TOTAL_XP = 1650;
