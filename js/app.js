@@ -1,23 +1,13 @@
-﻿// ============================================================
-// DETECTIVE DE DATOS - V3 SINGLE FILE
-// ============================================================
-
-// ============================================================
-// SETTINGS & SOUND SYSTEM
-// ============================================================
-
-const settings = {
+﻿const settings = {
     soundEnabled: true,
     darkMode: true
 };
 
-// Load settings from localStorage
 const savedSettings = localStorage.getItem('detective_settings');
 if (savedSettings) {
     Object.assign(settings, JSON.parse(savedSettings));
 }
 
-// Apply saved theme
 if (!settings.darkMode) {
     document.body.classList.add('light-mode');
 }
@@ -26,7 +16,6 @@ function saveSettings() {
     localStorage.setItem('detective_settings', JSON.stringify(settings));
 }
 
-// Sound effects using Web Audio API
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 function playSound(type) {
@@ -75,7 +64,6 @@ function playSound(type) {
     }
 }
 
-// Toolbar event listeners
 document.getElementById('btnHelp').addEventListener('click', () => {
     playSound('click');
     document.getElementById('helpModal').classList.add('active');
@@ -97,7 +85,6 @@ document.getElementById('btnTheme').addEventListener('click', function () {
     saveSettings();
 });
 
-// Apply initial button states
 if (!settings.soundEnabled) {
     document.getElementById('btnSound').classList.add('muted');
     document.getElementById('btnSound').querySelector('i').className = 'ri-volume-mute-line';
@@ -109,10 +96,6 @@ if (!settings.darkMode) {
 function closeHelpModal() {
     document.getElementById('helpModal').classList.remove('active');
 }
-
-// ============================================================
-// CERTIFICATE SYSTEM
-// ============================================================
 
 function showCertificateModal() {
     document.getElementById('certNameInput').style.display = 'flex';
@@ -132,51 +115,42 @@ function generateCertificate() {
     const canvas = document.getElementById('certificateCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 800, 600);
+        const gradient = ctx.createLinearGradient(0, 0, 800, 600);
     gradient.addColorStop(0, '#1e293b');
     gradient.addColorStop(1, '#0f172a');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, 800, 600);
 
-    // Border
-    ctx.strokeStyle = '#667eea';
+        ctx.strokeStyle = '#667eea';
     ctx.lineWidth = 8;
     ctx.strokeRect(20, 20, 760, 560);
 
-    // Inner border
-    ctx.strokeStyle = '#4ade80';
+        ctx.strokeStyle = '#4ade80';
     ctx.lineWidth = 2;
     ctx.strokeRect(35, 35, 730, 530);
 
-    // Title
-    ctx.fillStyle = '#667eea';
+        ctx.fillStyle = '#667eea';
     ctx.font = 'bold 42px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('🔍 DETECTIVE DE DATOS', 400, 100);
 
-    // Subtitle
-    ctx.fillStyle = '#4ade80';
+        ctx.fillStyle = '#4ade80';
     ctx.font = '24px Arial';
     ctx.fillText('CERTIFICADO DE COMPLETACIÓN', 400, 145);
 
-    // Trophy emoji
-    ctx.font = '80px Arial';
+        ctx.font = '80px Arial';
     ctx.fillText('🏆', 400, 240);
 
-    // Name
-    ctx.fillStyle = '#f1f5f9';
+        ctx.fillStyle = '#f1f5f9';
     ctx.font = 'bold 36px Arial';
     ctx.fillText(name, 400, 320);
 
-    // Achievement text
-    ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = '#94a3b8';
     ctx.font = '20px Arial';
     ctx.fillText('Ha completado exitosamente las 7 misiones', 400, 370);
     ctx.fillText('de Análisis de Series Temporales', 400, 400);
 
-    // Stats
-    const totalXP = gameState.totalXP;
+        const totalXP = gameState.totalXP;
     const ranks = ['Novato', 'Junior', 'Analyst', 'Senior', 'Expert', 'Master'];
     const rankThresholds = [0, 100, 300, 600, 1000, 1500];
     let rank = 'Novato';
@@ -191,8 +165,7 @@ function generateCertificate() {
     ctx.font = 'bold 24px Arial';
     ctx.fillText(`⭐ ${totalXP} XP | Rango: ${rank} ⭐`, 400, 460);
 
-    // Date
-    const today = new Date().toLocaleDateString('es-ES', {
+        const today = new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -201,8 +174,7 @@ function generateCertificate() {
     ctx.font = '16px Arial';
     ctx.fillText(`Expedido el ${today}`, 400, 520);
 
-    // Signature line
-    ctx.strokeStyle = '#475569';
+        ctx.strokeStyle = '#475569';
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(280, 555);
@@ -227,11 +199,9 @@ function downloadCertificate() {
 
 function restartGame() {
     if (confirm('¿Estás seguro? Se borrará todo tu progreso y empezarás desde cero.')) {
-        // Clear game state from localStorage
-        localStorage.removeItem('detective_game');
+                localStorage.removeItem('detective_game');
 
-        // Reset gameState
-        gameState.completedMissions = [];
+                gameState.completedMissions = [];
         gameState.unlockedMissions = [1];
         gameState.totalXP = 0;
         gameState.currentMission = null;
@@ -239,8 +209,7 @@ function restartGame() {
         gameState.answers = {};
         gameState.hintsUsed = 0;
 
-        // Close modal and refresh UI
-        document.getElementById('certificateModal').classList.remove('active');
+                document.getElementById('certificateModal').classList.remove('active');
         updateStats();
         showScreen('screenSelect');
         renderMissions();
@@ -248,10 +217,6 @@ function restartGame() {
         playSound('click');
     }
 }
-
-// ============================================================
-// DATOS REALES HARDCODEADOS
-// ============================================================
 
 // RETAIL 2022: 304 días (simplificado para demostración)
 const retailData = {
@@ -268,8 +233,7 @@ const retailData = {
         retailData.dates.push(d.toISOString().split('T')[0]);
 
         // Base creciente + estacionalidad semanal + ruido
-        const trend = 6420 + (i * 54); // Tendencia lineal
-        const dayOfWeek = d.getDay();
+        const trend = 6420 + (i * 54);         const dayOfWeek = d.getDay();
         const weeklyFactor = [0.92, 0.95, 0.94, 0.97, 0.99, 1.05, 0.91][dayOfWeek]; // Dom-Sáb
         const noise = (Math.random() - 0.5) * 500;
         let value = Math.round(trend * weeklyFactor + noise);
@@ -277,9 +241,7 @@ const retailData = {
         // Anomalías específicas
         if (i === 0) value = 2950; // Año Nuevo
         if (i === 120) value = Math.round(trend * 0.89); // Día del Trabajo
-        if (i === 121) value = Math.round(trend * 0.88); // Puente
-        if (i === 303) value = Math.round(trend * 1.5); // Halloween
-
+        if (i === 121) value = Math.round(trend * 0.88);         if (i === 303) value = Math.round(trend * 1.5); 
         retailData.values.push(value);
     }
 })();
@@ -313,15 +275,10 @@ const ecommerceData = {
         const volatility = (Math.random() - 0.5) * trend * 0.3;
         let value = Math.round(trend + volatility);
 
-        // Picos en eventos
-        const month = d.getMonth();
+                const month = d.getMonth();
         const day = d.getDate();
         if (month === 1 && day === 14) value *= 1.5; // Valentine's
-        if (month === 6 && day >= 11 && day <= 12) value *= 1.4; // Prime Day
-        if (month === 10 && day === 24) value *= 1.85; // Black Friday
-        if (month === 10 && day === 27) value *= 1.7; // Cyber Monday
-        if (month === 11 && day >= 20 && day <= 25) value *= 1.45; // Navidad
-
+        if (month === 6 && day >= 11 && day <= 12) value *= 1.4;         if (month === 10 && day === 24) value *= 1.85;         if (month === 10 && day === 27) value *= 1.7;         if (month === 11 && day >= 20 && day <= 25) value *= 1.45; 
         ecommerceData.values.push(Math.round(value));
     }
 })();
@@ -688,10 +645,6 @@ const missions = [
     }
 ];
 
-// ============================================================
-// GAME STATE
-// ============================================================
-
 let gameState = {
     totalXP: 0,
     completedMissions: [],
@@ -703,7 +656,6 @@ let gameState = {
     chart: null
 };
 
-// Load from localStorage
 const saved = localStorage.getItem('detective_v3');
 if (saved) {
     const parsed = JSON.parse(saved);
@@ -718,16 +670,11 @@ function saveGame() {
     }));
 }
 
-// ============================================================
-// RENDER FUNCTIONS
-// ============================================================
-
 function updateStats() {
     document.getElementById('totalXP').textContent = gameState.totalXP;
     document.getElementById('missionsCompleted').textContent = `${gameState.completedMissions.length}/7`;
 
-    // Calculate rank
-    const ranks = ['Novato', 'Junior', 'Analyst', 'Senior', 'Expert', 'Master'];
+        const ranks = ['Novato', 'Junior', 'Analyst', 'Senior', 'Expert', 'Master'];
     const rankThresholds = [0, 100, 300, 600, 1000, 1500];
     let rank = 'Novato';
     for (let i = rankThresholds.length - 1; i >= 0; i--) {
@@ -767,10 +714,6 @@ function showScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
-// ============================================================
-// MISSION LOGIC
-// ============================================================
-
 function startMission(missionId) {
     const mission = missions.find(m => m.id === missionId);
     if (!mission) return;
@@ -792,17 +735,14 @@ function renderQuestion() {
     const mission = gameState.currentMission;
     const question = mission.questions[gameState.currentQuestionIndex];
 
-    // Update progress
-    document.getElementById('questionProgress').textContent =
+        document.getElementById('questionProgress').textContent =
         `Pregunta ${gameState.currentQuestionIndex + 1} de ${mission.questions.length}`;
 
     document.getElementById('questionTitle').textContent = question.title;
 
-    // Render chart
-    renderChart(question.chartType, question.chartConfig);
+        renderChart(question.chartType, question.chartConfig);
 
-    // Render question content
-    const contentDiv = document.getElementById('questionContent');
+        const contentDiv = document.getElementById('questionContent');
 
     if (question.type === 'select') {
         contentDiv.innerHTML = `
@@ -820,8 +760,7 @@ function renderQuestion() {
     `;
     }
 
-    // Reset UI
-    document.getElementById('hintPanel').style.display = 'none';
+        document.getElementById('hintPanel').style.display = 'none';
     document.getElementById('explanationPanel').style.display = 'none';
     document.getElementById('btnSubmit').style.display = 'inline-flex';
     document.getElementById('btnNext').style.display = 'none';
@@ -913,8 +852,7 @@ function renderChart(type, config) {
                 }]
             };
 
-            // Add annotations
-            config.anomalies.forEach((a, idx) => {
+                        config.anomalies.forEach((a, idx) => {
                 chartConfig.options.plugins.annotation.annotations[`label${idx}`] = {
                     type: 'label',
                     xValue: config.labels[a.index],
@@ -938,8 +876,7 @@ function renderChart(type, config) {
                 }]
             };
 
-            // Add zone backgrounds
-            config.zones.forEach((z, idx) => {
+                        config.zones.forEach((z, idx) => {
                 chartConfig.options.plugins.annotation.annotations[`zone${idx}`] = {
                     type: 'box',
                     xMin: config.labels[z.start],
@@ -1080,8 +1017,7 @@ function submitAnswer() {
         }
     }
 
-    // Check answer
-    let isCorrect = false;
+        let isCorrect = false;
     if (question.type === 'select') {
         isCorrect = userAnswer === question.correct;
     } else if (question.type === 'number') {
@@ -1092,11 +1028,9 @@ function submitAnswer() {
         }
     }
 
-    // Store answer
-    gameState.answers[question.id] = { answer: userAnswer, correct: isCorrect };
+        gameState.answers[question.id] = { answer: userAnswer, correct: isCorrect };
 
-    // Show feedback
-    const panel = document.getElementById('explanationPanel');
+        const panel = document.getElementById('explanationPanel');
     const title = document.getElementById('explanationTitle');
     const text = document.getElementById('explanationText');
 
@@ -1107,20 +1041,17 @@ function submitAnswer() {
         '<i class="ri-close-circle-line"></i> Incorrecto';
     text.textContent = question.explanation;
 
-    // Visual feedback on options
-    if (question.type === 'select') {
+        if (question.type === 'select') {
         document.querySelectorAll('.option-btn').forEach(btn => {
             if (btn.dataset.value === question.correct) {
                 btn.classList.add('correct');
             } else if (btn.classList.contains('selected') && !isCorrect) {
                 btn.classList.add('incorrect');
             }
-            btn.onclick = null; // Disable clicks
-        });
+            btn.onclick = null;         });
     }
 
-    // Effects
-    if (isCorrect) {
+        if (isCorrect) {
         playSound('correct');
         if (typeof confetti !== 'undefined') {
             confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
@@ -1131,13 +1062,11 @@ function submitAnswer() {
         setTimeout(() => document.querySelector('.question-panel').classList.remove('shake'), 500);
     }
 
-    // Toggle buttons
-    document.getElementById('btnSubmit').style.display = 'none';
+        document.getElementById('btnSubmit').style.display = 'none';
     document.getElementById('btnHint').style.display = 'none';
     document.getElementById('btnNext').style.display = 'inline-flex';
 
-    // Update button text if last question
-    if (gameState.currentQuestionIndex >= gameState.currentMission.questions.length - 1) {
+        if (gameState.currentQuestionIndex >= gameState.currentMission.questions.length - 1) {
         document.getElementById('btnNext').innerHTML = 'Finalizar <i class="ri-trophy-line"></i>';
     }
 }
@@ -1156,12 +1085,10 @@ function nextQuestion() {
 function completeMission() {
     const mission = gameState.currentMission;
 
-    // Calculate XP
-    let correctCount = Object.values(gameState.answers).filter(a => a.correct).length;
+        let correctCount = Object.values(gameState.answers).filter(a => a.correct).length;
     let xpEarned = Math.round(mission.xp * (correctCount / mission.questions.length));
 
-    // Update state
-    if (!gameState.completedMissions.includes(mission.id)) {
+        if (!gameState.completedMissions.includes(mission.id)) {
         gameState.completedMissions.push(mission.id);
     }
 
@@ -1174,8 +1101,7 @@ function completeMission() {
     saveGame();
     updateStats();
 
-    // Show modal
-    document.getElementById('completeTitle').textContent = mission.id === 7 ?
+        document.getElementById('completeTitle').textContent = mission.id === 7 ?
         '🎓 ¡Campaña Completada!' : `¡Misión ${mission.id} Completada!`;
     document.getElementById('completeXP').textContent = `+${xpEarned} XP`;
     document.getElementById('completeStats').textContent =
@@ -1201,19 +1127,11 @@ function closeModal() {
     }
 }
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-
 document.getElementById('btnBack').addEventListener('click', () => {
     if (confirm('¿Seguro que quieres salir? Perderás el progreso de esta misión.')) {
         showScreen('screenSelect');
     }
 });
-
-// ============================================================
-// INIT
-// ============================================================
 
 updateStats();
 renderMissions();
