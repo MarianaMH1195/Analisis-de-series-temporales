@@ -785,9 +785,81 @@ function showHint() {
         document.getElementById('hintText').textContent = question.hints[gameState.hintsUsed];
         document.getElementById('hintPanel').style.display = 'block';
         gameState.hintsUsed++;
-    } else {
-        alert("¡Ya no hay más pistas!");
     }
+}
+
+// Certificate Functions
+function showCertificateModal() {
+    document.getElementById('certificateModal').classList.add('active');
+}
+
+function closeCertificateModal() {
+    document.getElementById('certificateModal').classList.remove('active');
+}
+
+function generateCertificate() {
+    const playerName = document.getElementById('playerName').value.trim();
+    if (!playerName) {
+        alert('Por favor ingresa tu nombre');
+        return;
+    }
+
+    const canvas = document.getElementById('certificateCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, 800, 600);
+
+    // Border
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 10;
+    ctx.strokeRect(20, 20, 760, 560);
+
+    // Title
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Certificado de Completación', 400, 120);
+
+    // Subtitle
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '24px Arial';
+    ctx.fillText('Detective de Datos', 400, 170);
+
+    // Player name
+    ctx.font = 'bold 36px Arial';
+    ctx.fillStyle = '#64ffda';
+    ctx.fillText(playerName, 400, 280);
+
+    // Description
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '20px Arial';
+    ctx.fillText('Ha completado exitosamente las 7 misiones', 400, 340);
+    ctx.fillText('de Análisis de Series Temporales', 400, 370);
+
+    // Stats
+    ctx.font = '18px Arial';
+    ctx.fillStyle = '#667eea';
+    ctx.fillText(`XP Total: ${gameState.totalXP} | Rango: ${getRank()}`, 400, 430);
+
+    // Date
+    ctx.fillStyle = '#888';
+    ctx.font = '16px Arial';
+    const date = new Date().toLocaleDateString('es-ES');
+    ctx.fillText(date, 400, 520);
+
+    // Show canvas
+    document.getElementById('certNameInput').style.display = 'none';
+    document.getElementById('certCanvas').style.display = 'block';
+}
+
+function downloadCertificate() {
+    const canvas = document.getElementById('certificateCanvas');
+    const link = document.createElement('a');
+    link.download = 'certificado_detective_de_datos.png';
+    link.href = canvas.toDataURL();
+    link.click();
 }
 
 // Globals needed for HTML callbacks
