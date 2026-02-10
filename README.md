@@ -39,32 +39,35 @@ Al completar las 7 misiones, los usuarios serán capaces de:
 
 ## 📂 Arquitectura del Proyecto
 
-Hemos estructurado el proyecto siguiendo estándares de la industria para separar claramente el entorno de producción de las herramientas de ingeniería.
+El proyecto está estructurado para facilitar el despliegue directo en GitHub Pages y otros servicios de hosting estático.
 
-### 🚀 `/public` (Entorno de Producción)
-Esta carpeta contiene el **artefacto desplegable**. Todo lo necesario para ejecutar el juego reside aquí, optimizado para cualquier servidor web estático.
+### 🚀 Archivos de Producción (Raíz)
+Los archivos del juego están en la raíz del repositorio, listos para ser desplegados:
 
 *   **`index.html`**: El punto de entrada único de la aplicación.
 *   **`js/app.js`**: El núcleo lógico del juego. Refactorizado para ser modular, eficiente y fácil de mantener (Vanilla JS).
 *   **`css/styles.css`**: Sistema de diseño visual responsivo.
 *   **`data/`**: La fuente de la verdad. Datasets (CSV) y configuraciones (JSON) que alimentan el motor del juego.
+*   **`.nojekyll`**: Archivo que indica a GitHub Pages que no procese el sitio con Jekyll.
 
 ### 🛠️ `/_dev_tools` (Utilidades de Desarrollo)
-Zona reservada para el equipo de ingeniería y QA. Aquí se encuentran los scripts de generación de datos y las suites de pruebas automatizadas que garantizan la integridad de la lógica antes de cada despliegue.
+Zona reservada para el equipo de ingeniería y QA. GitHub Pages ignora esta carpeta automáticamente (por el prefijo `_`).
 
 *   **Scripts Python**: Generadores de datos sintéticos y notebooks de análisis exploratorio (EDA).
 *   **Tests**: Validación de lógica de negocio (`*.test.js`).
 *   **Config**: Archivos de entorno y dependencias.
 
+### 📚 `/docs` (Documentación)
+*   **`SOLUCIONES.md`**: Guía pedagógica completa para docentes con solucionario y justificaciones técnicas.
+
 ## ⚡ Guía de Inicio Rápido
 
 ### Para Jugar (Despliegue Local)
-Simplemente entra en la carpeta `public` y abre el archivo `index.html` en tu navegador.
+Simplemente abre el archivo `index.html` en tu navegador.
 Para una mejor experiencia (y evitar políticas CORS con los archivos CSV), te recomendamos usar un servidor local simple:
 
 ```bash
 # Opción con Python (recomendada)
-cd public
 python -m http.server 8000
 ```
 Luego navega a `http://localhost:8000`.
@@ -72,10 +75,10 @@ Luego navega a `http://localhost:8000`.
 **Alternativas:**
 ```bash
 # Con Node.js
-npx http-server public -p 8000
+npx http-server -p 8000
 
 # Con PHP
-cd public && php -S localhost:8000
+php -S localhost:8000
 ```
 
 ### Para Docentes
@@ -83,20 +86,25 @@ Consulta el archivo `docs/SOLUCIONES.md` para obtener la guía pedagógica compl
 
 ## 🚀 Despliegue en Producción
 
-### GitHub Pages
+### GitHub Pages (Configuración Actual)
+El proyecto está configurado para desplegarse directamente desde la raíz del repositorio:
+
 1. Ve a **Settings** → **Pages**
-2. Selecciona la rama `main` o `develop`
-3. Configura la carpeta raíz como `/public`
-4. Guarda y espera el despliegue automático
+2. Selecciona **Source**: Deploy from a branch
+3. Selecciona **Branch**: `main`
+4. Selecciona **Folder**: `/ (root)`
+5. Guarda y espera el despliegue automático
+
+El archivo `.nojekyll` en la raíz asegura que GitHub Pages no procese el proyecto con Jekyll, publicando los archivos tal cual.
 
 ### Netlify / Vercel
 1. Conecta tu repositorio
 2. Configura el **Build Command**: (vacío)
-3. Configura el **Publish Directory**: `public`
+3. Configura el **Publish Directory**: `.` (raíz)
 4. Despliega
 
 ### Servidor Propio
-Simplemente copia el contenido de `/public` a tu servidor web (Apache, Nginx, etc.)
+Simplemente copia todo el contenido del repositorio (excepto `_dev_tools`, `docs`, `.git`) a tu servidor web (Apache, Nginx, etc.)
 
 ## 💻 Stack Tecnológico
 
