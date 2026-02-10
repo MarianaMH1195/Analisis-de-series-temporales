@@ -1,96 +1,89 @@
-# 🕵️‍♂️ Detective de Datos - Soluciones de Misiones (V2)
+# 🎓 Guía Didáctica y Solucionario - Detective de Datos v3.0
 
-Aquí tienes la guía de respuestas correctas para todas las misiones de la campaña **REFACTORIZADA V2**.
-
----
-
-## 📅 Misión 1: Caso Retail 2022
-**Objetivo:** Identificar la tendencia general.
-
-*   **Pregunta 1:** ¿Cuál es la tendencia principal de las ventas?
-    *   **Respuesta Correcta:** `📈 Creciente (Alza)` ("uptrend")
-    *   *Explicación:* Las ventas crecen consistentemente de 6.4K a 33K unidades (+265%).
+> **Recurso Confidencial para Docentes**
+> Este documento contiene el desglose pedagógico y las respuestas correctas para las 7 misiones del juego. Úsalo para guiar la reflexión de los estudiantes.
 
 ---
 
-## 🔄 Misión 2: El Patrón Semanal
-**Objetivo:** Detectar estacionalidad.
-
-*   **Pregunta 1:** ¿Cada cuántos días se repite el patrón (período)?
-    *   **Respuesta Correcta:** `7`
-    *   *Explicación:* Patrón semanal clásico.
-
-*   **Pregunta 2:** ¿En qué día se venden más unidades?
-    *   **Respuesta Correcta:** `Sábado` ("saturday")
-    *   *Explicación:* Día pico de la semana.
+## 🎯 Objetivo Pedagógico
+El objetivo de "Detective de Datos" no es solo leer gráficos, sino **interpretar contextos de negocio**. Cada misión evalúa una competencia específica del analista de datos moderno:
+1.  **Observación:** Identificar patrones visuales simples.
+2.  **Análisis:** Conectar puntos de datos con eventos del mundo real.
+3.  **Estrategia:** Tomar decisiones basadas en la evidencia histórica.
 
 ---
 
-## 🚨 Misión 3: Anomalías
-**Objetivo:** Encontrar eventos especiales (Puntos Rojos).
+## 📝 Solucionario Detallado
 
-*   **Pregunta 1:** ¿Cuántos eventos especiales (anomalías) identificas?
-    *   **Respuesta Correcta:** `4`
-    *   *Explicación:* Año Nuevo, Día Trabajo, Promo, Halloween.
+### Misión 1: Tendencia Retail
+**Competencia:** Identificación de Tendencias a Largo Plazo.
 
-*   **Pregunta 2:** ¿Qué evento causó la MAYOR CAÍDA?
-    *   **Respuesta Correcta:** `Año Nuevo` ("newyear")
-    *   *Explicación:* Caída del 58%, el punto más bajo del gráfico.
+*   **P1: Decisión Estratégica**
+    *   **Respuesta:** `📈 Aumentar inventario y personal`
+    *   **Por qué:** La serie muestra un crecimiento sostenido del 265%. Una estrategia conservadora (mantener o reducir) resultaría en pérdida de cuota de mercado por falta de stock (stockout).
+
+### Misión 2: Estacionalidad Semanal
+**Competencia:** Reconocimiento de Patrones Cíclicos.
+
+*   **P1: Frecuencia del Pico**
+    *   **Respuesta:** `7` días.
+    *   **Por qué:** El patrón se repite semanalmente, típico del sector retail (fines de semana).
+*   **P2: Promociones**
+    *   **Respuesta:** `Sábado`.
+    *   **Por qué:** Es el día de mayor volumen natural. Las promociones aquí tienen el mayor retorno de inversión (ROI) por volumen de tráfico.
+
+### Misión 3: Cazador de Anomalías
+**Competencia:** Detección de Outliers.
+
+*   **P1: Cantidad de Anomalías**
+    *   **Respuesta:** `4` eventos.
+    *   **Detalle:** 1 pico positivo (Halloween) y 3 caídas abruptas (Festivos).
+*   **P2: Mayor Impacto Negativo**
+    *   **Respuesta:** `Año Nuevo`.
+    *   **Por qué:** Representa el mínimo absoluto de la serie (-58%), indicando un cierre total de operaciones.
+
+### Misión 4: Analista SaaS (B2B)
+**Competencia:** Métricas de Crecimiento y KPIs.
+
+*   **P1: Tipo de Crecimiento**
+    *   **Respuesta:** `📈 Lineal`.
+    *   **Por qué:** A diferencia del E-commerce (volátil) o Startups virales (exponencial), este SaaS B2B crece de manera constante y predecible, ideal para proyecciones financieras fiables.
+*   **P2: Crecimiento Anual**
+    *   **Respuesta:** `130%`.
+    *   **Cálculo:** `(Valor Final - Valor Inicial) / Valor Inicial`. `(18.9 - 8.2) / 8.2 ≈ 1.30`.
+
+### Misión 5: E-commerce Volátil
+**Competencia:** Gestión de Riesgo e Inventario.
+
+*   **P1: Característica Principal**
+    *   **Respuesta:** `📈 Alta volatilidad`.
+    *   **Implicación:** Requiere una gestión de inventario ágil y buffer de seguridad (stock extra) para no fallar en los picos impredecibles.
+*   **P2: Trimestre de Riesgo**
+    *   **Respuesta:** `Q4 (Oct-Dic)`.
+    *   **Por qué:** Concentra Black Friday y Navidad. El volumen se dispara, estresando la logística.
+*   **P3: Eventos Críticos (>160%)**
+    *   **Respuesta:** `2` (Black Friday y Cyber Monday).
+
+### Misión 6: Profeta de Datos
+**Competencia:** Forecasting (Proyección).
+
+*   **P1: Proyección Noviembre**
+    *   **Respuesta:** `24k`.
+    *   **Método:** Extrapolación visual de la línea de tendencia media.
+*   **P2: Escenario "What-If" (Navidad)**
+    *   **Respuesta:** `~30K`.
+    *   **Lógica:** Base (25k) + Impacto Estacional (+20% = 5k) = 30k.
+
+### Misión 7: Capstone (Estrategia)
+**Competencia:** Evaluación de Portafolio y Perfil de Inversión.
+
+*   **P1: Ingresos Predecibles**
+    *   **Respuesta:** `SaaS`. (Baja volatilidad, alta recurrencia).
+*   **P2: Mayor Stock de Seguridad**
+    *   **Respuesta:** `E-commerce`. (Picos extremos requieren colchón).
+*   **P3: Mayor Crecimiento**
+    *   **Respuesta:** `E-commerce` (320%).
+    *   **Lección:** Mayor riesgo (volatilidad) suele correlacionar con mayor recompensa potencial (crecimiento).
 
 ---
-
-## 💻 Misión 4: Caso SaaS
-**Objetivo:** Analizar crecimiento exponencial/lineal (ProductAPI).
-
-*   **Pregunta 1:** ¿Cuál es el patrón principal de crecimiento?
-    *   **Respuesta Correcta:** `📈 Crecimiento Lineal Constante` ("linear")
-    *   *Explicación:* A diferencia del retail, SaaS B2B suele ser constante y predecible.
-
-*   **Pregunta 2:** ¿Cuál es el crecimiento aproximado en %?
-    *   **Respuesta Correcta:** `130` (se acepta entre 120 y 140)
-    *   *Explicación:* De ~8.2K a ~18.9K.
-
----
-
-## 🛒 Misión 5: E-commerce
-**Objetivo:** Volatilidad y Eventos (NeoStore).
-
-*   **Pregunta 1:** ¿Cuál es la característica principal del tráfico?
-    *   **Respuesta Correcta:** `📈 Crecimiento con alta volatilidad (picos)` ("volatile_growth")
-    *   *Explicación:* Montaña rusa con picos muy marcados en fechas clave.
-
-*   **Pregunta 2:** ¿En qué período se observan los MAYORES PICOS?
-    *   **Respuesta Correcta:** `Invierno (Nov-Dic)` ("winter")
-    *   *Explicación:* Black Friday, Cyber Monday y Navidad están todos en Q4.
-
-*   **Pregunta 3:** ¿Cuántos EPICENTROS de ventas (>100% pico) ves?
-    *   **Respuesta Correcta:** `5`
-    *   *Explicación:* San Valentín, Prime Day, Black Friday, Cyber Monday, Navidad.
-
----
-
-## 🔮 Misión 6: Forecasting
-**Objetivo:** Predecir con lógica matemática.
-
-*   **Pregunta 1:** ¿Promedio esperado para NOVIEMBRE 2022?
-    *   **Respuesta Correcta:** `35000` (se acepta 34000-36000)
-    *   *Explicación:* Siguiendo la línea de tendencia amarilla.
-
-*   **Pregunta 2:** Si aplicamos efecto Navidad (+20%), ¿para Diciembre?
-    *   **Respuesta Correcta:** `~44.0K` ("44000")
-    *   *Explicación:* Tendencia base (37K) + Bonus Navidad (20%).
-
----
-
-## 🎓 Misión 7: Business Intelligence (Capstone)
-**Objetivo:** Estrategia comparativa.
-
-*   **Pregunta 1:** ¿Cuál es la insight CRÍTICA comparativa?
-    *   **Respuesta Correcta:** `Cada industria tiene patrones ÚNICOS` ("patterns_differ")
-    *   *Explicación:* No hay una talla única para todos.
-
-*   **Pregunta 2:** ¿Métrica clave para cada industria?
-    *   **Respuesta Correcta:** `Retail: Rotación | SaaS: Retención | E-com: Conversión` ("specific")
-
-*   **Pregunta 3:** Recomendación Estratégica para el próximo año
-    *   **Respuesta Correcta:** `Retail: Q4 Stock | SaaS: Q1 Onboarding | E-com: Q4 Marketing` ("strategy")
+*Documento generado para Data Analytics Academy.*
