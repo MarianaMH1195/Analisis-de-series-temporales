@@ -99,11 +99,27 @@ Consulta el archivo `docs/SOLUCIONES.md` para obtener la guía pedagógica compl
 Simplemente copia el contenido de `/public` a tu servidor web (Apache, Nginx, etc.)
 
 ## 💻 Stack Tecnológico
-*   **Core:** HTML5, CSS3, Vanilla JavaScript (ES6+).
-*   **Visualización:** Chart.js 4.4 + Plugin Annotation.
-*   **Animación:** Anime.js & Canvas Confetti.
-*   **Datos:** Procesamiento CSV nativo en cliente.
-*   **Accesibilidad:** ARIA labels, navegación por teclado.
+
+### Frontend
+*   **HTML5** - Estructura semántica y accesible
+*   **CSS3** - Sistema de diseño con variables CSS y modo oscuro/claro
+*   **JavaScript (ES6+)** - Vanilla JS, sin frameworks
+
+### Librerías y Dependencias
+*   **[Chart.js](https://www.chartjs.org/) v4.4.0** - Visualización de gráficos interactivos
+*   **[chartjs-plugin-annotation](https://www.chartjs.org/chartjs-plugin-annotation/) v3.0.1** - Anotaciones y marcadores en gráficos
+*   **[Anime.js](https://animejs.com/) v3.2.1** - Animaciones fluidas de UI
+*   **[Canvas Confetti](https://github.com/catdad/canvas-confetti) v1.9.0** - Efectos de celebración
+*   **[Remix Icon](https://remixicon.com/) v3.5.0** - Sistema de iconografía
+
+### Datos
+*   **CSV nativo** - Procesamiento de datasets en cliente (sin backend)
+*   **LocalStorage API** - Persistencia de progreso del jugador
+
+### Accesibilidad
+*   **ARIA labels** - Compatibilidad con lectores de pantalla
+*   **Navegación por teclado** - Controles accesibles
+*   **Anuncios en vivo** - Feedback para tecnologías asistivas
 
 ## 🤝 Contribuciones
 
