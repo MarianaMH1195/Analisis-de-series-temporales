@@ -1,8 +1,4 @@
-﻿/**
- * Detective de Datos
- * Main Application Logic
- */
-
+﻿
 // ==========================================
 // 1. STATE & CONFIGURATION
 // ==========================================
