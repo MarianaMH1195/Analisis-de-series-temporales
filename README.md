@@ -4,6 +4,39 @@
 
 **Detective de Datos** es una simulación interactiva diseñada para entrenar la capacidad analítica. A través de 7 misiones prácticas con datos reales, los usuarios aprenden a interpretar patrones complejos (tendencias, estacionalidad, anomalías) y transformar datos en decisiones de negocio estratégicas.
 
+## ✨ Características Principales
+
+- 🎮 **7 Misiones Progresivas**: Desde análisis básico de tendencias hasta estrategias de portafolio multi-industria
+- 📊 **Datos Reales**: Datasets auténticos de Retail, SaaS B2B y E-commerce
+- 🎯 **Gamificación**: Sistema de XP, rangos y certificado final de completación
+- 🌓 **Modo Oscuro/Claro**: Interfaz adaptable con animaciones fluidas
+- ♿ **Accesibilidad**: Navegación por teclado y compatibilidad con lectores de pantalla
+- 📱 **Responsive**: Optimizado para desktop, tablet y móvil
+
+## 🎓 Objetivos de Aprendizaje
+
+Al completar las 7 misiones, los usuarios serán capaces de:
+
+1. **Identificar tendencias** a largo plazo y tomar decisiones estratégicas
+2. **Reconocer patrones estacionales** y optimizar operaciones
+3. **Detectar anomalías** y eventos de fuerza mayor en series temporales
+4. **Calcular KPIs** de crecimiento y evaluar métricas de negocio
+5. **Gestionar riesgo** en entornos de alta volatilidad
+6. **Proyectar escenarios** futuros con forecasting básico
+7. **Comparar industrias** y diseñar estrategias de inversión
+
+## 🗺️ Mapa de Misiones
+
+| # | Título | Competencia | Dificultad | XP |
+|---|--------|-------------|------------|-----|
+| 1 | Tendencia Retail | Identificación de Tendencias | ⭐ | 100 |
+| 2 | Estacionalidad Semanal | Patrones Cíclicos | ⭐⭐ | 150 |
+| 3 | Cazador de Anomalías | Detección de Outliers | ⭐⭐ | 150 |
+| 4 | Analista SaaS | Métricas de Crecimiento | ⭐⭐⭐ | 200 |
+| 5 | E-commerce Volátil | Gestión de Riesgo | ⭐⭐⭐ | 250 |
+| 6 | Profeta de Datos | Forecasting | ⭐⭐⭐⭐ | 300 |
+| 7 | Senior Analyst | Estrategia de Portafolio | ⭐⭐⭐⭐⭐ | 500 |
+
 ## 📂 Arquitectura del Proyecto
 
 Hemos estructurado el proyecto siguiendo estándares de la industria para separar claramente el entorno de producción de las herramientas de ingeniería.
@@ -25,7 +58,7 @@ Zona reservada para el equipo de ingeniería y QA. Aquí se encuentran los scrip
 
 ## ⚡ Guía de Inicio Rápido
 
-### Para Jugar (Despliegue)
+### Para Jugar (Despliegue Local)
 Simplemente entra en la carpeta `public` y abre el archivo `index.html` en tu navegador.
 Para una mejor experiencia (y evitar políticas CORS con los archivos CSV), te recomendamos usar un servidor local simple:
 
@@ -36,14 +69,62 @@ python -m http.server 8000
 ```
 Luego navega a `http://localhost:8000`.
 
+**Alternativas:**
+```bash
+# Con Node.js
+npx http-server public -p 8000
+
+# Con PHP
+cd public && php -S localhost:8000
+```
+
 ### Para Docentes
 Consulta el archivo `docs/SOLUCIONES.md` para obtener la guía pedagógica completa, incluyendo el solucionario y la justificación técnica de cada misión.
+
+## 🚀 Despliegue en Producción
+
+### GitHub Pages
+1. Ve a **Settings** → **Pages**
+2. Selecciona la rama `main` o `develop`
+3. Configura la carpeta raíz como `/public`
+4. Guarda y espera el despliegue automático
+
+### Netlify / Vercel
+1. Conecta tu repositorio
+2. Configura el **Build Command**: (vacío)
+3. Configura el **Publish Directory**: `public`
+4. Despliega
+
+### Servidor Propio
+Simplemente copia el contenido de `/public` a tu servidor web (Apache, Nginx, etc.)
 
 ## 💻 Stack Tecnológico
 *   **Core:** HTML5, CSS3, Vanilla JavaScript (ES6+).
 *   **Visualización:** Chart.js 4.4 + Plugin Annotation.
 *   **Animación:** Anime.js & Canvas Confetti.
 *   **Datos:** Procesamiento CSV nativo en cliente.
+*   **Accesibilidad:** ARIA labels, navegación por teclado.
+
+## 🤝 Contribuciones
+
+Este proyecto es de código abierto y las contribuciones son bienvenidas. Si deseas agregar nuevas misiones, mejorar la UI o corregir bugs:
+
+1. Haz fork del repositorio
+2. Crea una rama feature (`git checkout -b feature/nueva-mision`)
+3. Realiza tus cambios y haz commit
+4. Envía un Pull Request a la rama `develop`
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
+
+## 👥 Autoras
+
+Este proyecto fue desarrollado por:
+
+- **Mariana Moreno Henao** - [LinkedIn](https://www.linkedin.com/in/mariana-moreno-henao/)
+- **Rocío Lozano Caro** - [LinkedIn](https://www.linkedin.com/in/rociolozanocaro/)
 
 ---
 
+*Proyecto desarrollado como píldora formativa del Bootcamp de Data Analysis - Factoría F5*
