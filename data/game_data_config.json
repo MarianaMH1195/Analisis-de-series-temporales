@@ -1,0 +1,12 @@
+{
+    "datasets": {
+        "retail": "data/retail_2022_cleaned.csv",
+        "saas": "data/saas_2023_cleaned.csv",
+        "ecommerce": "data/ecommerce_2023_cleaned.csv"
+    },
+    "metadata": {
+        "version": "2.0",
+        "last_updated": "2026-02-10",
+        "description": "Datos reales sintetizados para Detective de Datos v2.0"
+    }
+}
