@@ -800,6 +800,16 @@ function showHint() {
     }
 }
 
+// Rank Calculation
+function getRank() {
+    const xp = gameState.totalXP;
+    if (xp >= 700) return 'Maestro Analista';
+    if (xp >= 500) return 'Analista Experto';
+    if (xp >= 300) return 'Analista Avanzado';
+    if (xp >= 150) return 'Analista Junior';
+    return 'Aprendiz';
+}
+
 // Certificate Functions
 function showCertificateModal() {
     document.getElementById('certificateModal').classList.add('active');
