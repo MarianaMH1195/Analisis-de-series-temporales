@@ -698,7 +698,10 @@ function playSound(type) {
     osc.stop(now + 0.3);
 }
 
-function saveGame() { localStorage.setItem(GAME_KEY, JSON.stringify(gameState)); }
+function saveGame() {
+    const { chart, currentMission, ...serializableState } = gameState;
+    localStorage.setItem(GAME_KEY, JSON.stringify(serializableState));
+}
 function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
