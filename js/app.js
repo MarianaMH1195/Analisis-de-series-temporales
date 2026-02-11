@@ -789,6 +789,7 @@ function restartGame() {
 function updateStats() {
     document.getElementById('totalXP').textContent = gameState.totalXP;
     document.getElementById('missionsCompleted').textContent = `${gameState.completedMissions.length}/7`;
+    document.getElementById('currentRank').textContent = getRank();
 }
 
 function showHint() {
