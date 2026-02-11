@@ -606,6 +606,7 @@ function renderStage() {
     document.getElementById('btnSubmit').style.display = 'inline-flex';
     document.getElementById('btnNext').style.display = 'none';
     document.getElementById('explanationPanel').style.display = 'none';
+    document.getElementById('hintPanel').style.display = 'none';
 
     // Inputs
     const content = document.getElementById('questionContent');
@@ -675,30 +676,67 @@ function updateConfigIcons() {
 
 function playSound(type) {
     if (!settings.soundEnabled) return;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-
     const now = audioContext.currentTime;
-    gain.gain.setValueAtTime(0.1, now);
 
-    const frequencies = {
-        click: [800, 600],
-        correct: [523, 659, 784],
-        incorrect: [200, 150],
-        complete: [523, 659, 784, 1047]
-    }[type] || [440, 440];
+    if (type === 'correct') {
+        // Cheerful ascending melody (C-E-G major chord)
+        [523.25, 659.25, 783.99].forEach((freq, i) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
 
-    // Simple beep logic
-    osc.frequency.setValueAtTime(frequencies[0], now);
-    if (frequencies.length > 1) osc.frequency.linearRampToValueAtTime(frequencies[1], now + 0.1);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0, now + i * 0.1);
+            gain.gain.linearRampToValueAtTime(0.15, now + i * 0.1 + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
 
-    osc.start(now);
-    osc.stop(now + 0.3);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.3);
+        });
+    } else if (type === 'incorrect') {
+        // Gentle descending tone (not harsh)
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+        osc.start(now);
+        osc.stop(now + 0.4);
+    } else {
+        // Original simple beep for other sounds
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        gain.gain.setValueAtTime(0.1, now);
+
+        const frequencies = {
+            click: [800, 600],
+            complete: [523, 659, 784, 1047]
+        }[type] || [440, 440];
+
+        osc.frequency.setValueAtTime(frequencies[0], now);
+        if (frequencies.length > 1) osc.frequency.linearRampToValueAtTime(frequencies[1], now + 0.1);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+    }
 }
 
-function saveGame() { localStorage.setItem(GAME_KEY, JSON.stringify(gameState)); }
+function saveGame() {
+    const { chart, currentMission, ...serializableState } = gameState;
+    localStorage.setItem(GAME_KEY, JSON.stringify(serializableState));
+}
 function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -754,6 +792,7 @@ function handleFeedback(isCorrect, question) {
 
 function nextQuestion() {
     if (++gameState.currentQuestionIndex < gameState.currentMission.questions.length) {
+        gameState.hintsUsed = 0;
         renderStage();
     } else {
         completeMission();
@@ -786,6 +825,7 @@ function restartGame() {
 function updateStats() {
     document.getElementById('totalXP').textContent = gameState.totalXP;
     document.getElementById('missionsCompleted').textContent = `${gameState.completedMissions.length}/7`;
+    document.getElementById('currentRank').textContent = getRank();
 }
 
 function showHint() {
@@ -795,6 +835,16 @@ function showHint() {
         document.getElementById('hintPanel').style.display = 'block';
         gameState.hintsUsed++;
     }
+}
+
+// Rank Calculation
+function getRank() {
+    const xp = gameState.totalXP;
+    if (xp >= 700) return 'Maestro Analista';
+    if (xp >= 500) return 'Analista Experto';
+    if (xp >= 300) return 'Analista Avanzado';
+    if (xp >= 150) return 'Analista Junior';
+    return 'Aprendiz';
 }
 
 // Certificate Functions
@@ -825,16 +875,24 @@ function generateCertificate() {
     ctx.lineWidth = 10;
     ctx.strokeRect(20, 20, 760, 560);
 
+    // Medal icon
+    ctx.font = '60px Arial';
+    ctx.fillText('🏅', 400, 80);
+
     // Title
     ctx.fillStyle = '#667eea';
     ctx.font = 'bold 48px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Certificado de Completación', 400, 120);
+    ctx.fillText('Certificado de Detective', 400, 140);
 
     // Subtitle
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
-    ctx.fillText('Detective de Datos', 400, 170);
+    ctx.fillText('Detective de Datos', 400, 190);
+
+    // Certifica a
+    ctx.font = '20px Arial';
+    ctx.fillText('Certifica a', 400, 240);
 
     // Player name
     ctx.font = 'bold 36px Arial';
@@ -844,7 +902,7 @@ function generateCertificate() {
     // Description
     ctx.fillStyle = '#ffffff';
     ctx.font = '20px Arial';
-    ctx.fillText('Ha completado exitosamente las 7 misiones', 400, 340);
+    ctx.fillText('que ha completado exitosamente las 7 misiones', 400, 340);
     ctx.fillText('de Análisis de Series Temporales', 400, 370);
 
     // Stats
