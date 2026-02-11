@@ -879,5 +879,6 @@ window.downloadCertificate = downloadCertificate;
 window.closeCertificateModal = closeCertificateModal;
 window.restartGame = restartGame;
 window.checkAnswer = checkAnswer;
+window.nextQuestion = nextQuestion;
 window.showHint = showHint;
 window.closeModal = closeCompletionModal;
