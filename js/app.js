@@ -676,27 +676,61 @@ function updateConfigIcons() {
 
 function playSound(type) {
     if (!settings.soundEnabled) return;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-
     const now = audioContext.currentTime;
-    gain.gain.setValueAtTime(0.1, now);
 
-    const frequencies = {
-        click: [800, 600],
-        correct: [523, 659, 784],
-        incorrect: [200, 150],
-        complete: [523, 659, 784, 1047]
-    }[type] || [440, 440];
+    if (type === 'correct') {
+        // Cheerful ascending melody (C-E-G major chord)
+        [523.25, 659.25, 783.99].forEach((freq, i) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
 
-    // Simple beep logic
-    osc.frequency.setValueAtTime(frequencies[0], now);
-    if (frequencies.length > 1) osc.frequency.linearRampToValueAtTime(frequencies[1], now + 0.1);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0, now + i * 0.1);
+            gain.gain.linearRampToValueAtTime(0.15, now + i * 0.1 + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
 
-    osc.start(now);
-    osc.stop(now + 0.3);
+            osc.start(now + i * 0.1);
+            osc.stop(now + i * 0.1 + 0.3);
+        });
+    } else if (type === 'incorrect') {
+        // Gentle descending tone (not harsh)
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.3);
+
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+        osc.start(now);
+        osc.stop(now + 0.4);
+    } else {
+        // Original simple beep for other sounds
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        gain.gain.setValueAtTime(0.1, now);
+
+        const frequencies = {
+            click: [800, 600],
+            complete: [523, 659, 784, 1047]
+        }[type] || [440, 440];
+
+        osc.frequency.setValueAtTime(frequencies[0], now);
+        if (frequencies.length > 1) osc.frequency.linearRampToValueAtTime(frequencies[1], now + 0.1);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+    }
 }
 
 function saveGame() {
