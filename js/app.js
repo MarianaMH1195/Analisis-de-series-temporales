@@ -849,6 +849,10 @@ function generateCertificate() {
     ctx.font = '24px Arial';
     ctx.fillText('Detective de Datos', 400, 170);
 
+    // Certifica a
+    ctx.font = '20px Arial';
+    ctx.fillText('Certifica a', 400, 240);
+
     // Player name
     ctx.font = 'bold 36px Arial';
     ctx.fillStyle = '#64ffda';
@@ -857,7 +861,7 @@ function generateCertificate() {
     // Description
     ctx.fillStyle = '#ffffff';
     ctx.font = '20px Arial';
-    ctx.fillText('Ha completado exitosamente las 7 misiones', 400, 340);
+    ctx.fillText('que ha completado exitosamente las 7 misiones', 400, 340);
     ctx.fillText('de Análisis de Series Temporales', 400, 370);
 
     // Stats
