@@ -758,6 +758,7 @@ function handleFeedback(isCorrect, question) {
 
 function nextQuestion() {
     if (++gameState.currentQuestionIndex < gameState.currentMission.questions.length) {
+        gameState.hintsUsed = 0;
         renderStage();
     } else {
         completeMission();
