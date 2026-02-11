@@ -842,7 +842,7 @@ function generateCertificate() {
     ctx.fillStyle = '#667eea';
     ctx.font = 'bold 48px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Certificado de Completación', 400, 120);
+    ctx.fillText('Certificado de Detective de Datos', 400, 120);
 
     // Subtitle
     ctx.fillStyle = '#ffffff';
