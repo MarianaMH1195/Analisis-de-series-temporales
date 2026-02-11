@@ -606,6 +606,7 @@ function renderStage() {
     document.getElementById('btnSubmit').style.display = 'inline-flex';
     document.getElementById('btnNext').style.display = 'none';
     document.getElementById('explanationPanel').style.display = 'none';
+    document.getElementById('hintPanel').style.display = 'none';
 
     // Inputs
     const content = document.getElementById('questionContent');
