@@ -211,7 +211,7 @@ const missions = [
                     title: "Crecimiento de Usuarios",
                     labels: saasData.months,
                     data: saasData.values,
-                    colors: saasData.values.map(() => "#4ade80"),
+                    colors: [], // Populated at runtime
                     showValues: true
                 },
                 correct: 130,
@@ -240,9 +240,9 @@ const missions = [
                     color: "#0066ff"
                 },
                 options: [
-                    { value: "stable", text: "Estable" },
+                    { value: "stable", text: "➡️ Estable" },
                     { value: "volatile", text: "📈 Alta volatilidad" },
-                    { value: "decline", text: "Declive gradual" }
+                    { value: "decline", text: "📉 Declive gradual" }
                 ],
                 correct: "volatile",
                 explanation: "La alta volatilidad complica el inventario, requiriendo stock de seguridad para los picos.",
@@ -370,6 +370,7 @@ const missions = [
                 chartType: "bar",
                 chartConfig: {
                     title: "Volatilidad por Industria",
+                    yAxisTitle: "Volatilidad (%)",
                     labels: ['Retail', 'SaaS', 'E-commerce'],
                     data: [13, 5, 45],
                     colors: ['#667eea', '#4ade80', '#ff6b6b']
@@ -390,6 +391,7 @@ const missions = [
                 chartType: "bar",
                 chartConfig: {
                     title: "Crecimiento Anual Total (%)",
+                    yAxisTitle: "Crecimiento (%)",
                     labels: ['Retail', 'SaaS', 'E-commerce'],
                     data: [265, 130, 320],
                     colors: ['#667eea', '#4ade80', '#ff6b6b']
@@ -476,6 +478,9 @@ async function loadData() {
         missions[1].questions[0].chartConfig.data = retailData.values.slice(1, 22);
         missions[1].questions[0].chartConfig.colors = retailData.values.slice(1, 22)
             .map((v, i) => (i % 7 === 5) ? '#4ade80' : '#667eea');
+
+        // Configurar datos dinámicos en Misión 4
+        missions[3].questions[1].chartConfig.colors = saasData.values.map(() => "#4ade80");
 
     } catch (e) {
         console.error("Error cargando datos:", e);
@@ -640,10 +645,121 @@ function renderChart(type, config) {
     }
 
     // Annotation Handling
+    if (config.yAxisTitle) {
+        options.scales = {
+            y: {
+                title: {
+                    display: true,
+                    text: config.yAxisTitle,
+                    font: { size: 14, weight: 'bold' },
+                    color: '#94a3b8'
+                }
+            }
+        };
+    }
+
     if (config.anomalies || config.zones || config.showThresholdLine) {
         options.plugins.annotation = { annotations: {} };
         if (config.showThresholdLine) addThresholdAnnotation(options, config.threshold);
         if (config.anomalies) addAnomalyAnnotations(options, config);
+    }
+
+    // Forecast Rendering
+    if (type === 'line_forecast') {
+        // Calculate Linear Regression
+        const values = config.data;
+        const n = values.length;
+        let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+
+        for (let i = 0; i < n; i++) {
+            sumX += i;
+            sumY += values[i];
+            sumXY += i * values[i];
+            sumXX += i * i;
+        }
+
+        const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+
+        // Generate Forecast Line (History + Future)
+        const forecastData = [];
+        const totalDays = config.forecastStart + config.forecastDays;
+
+        // Extend labels if needed
+        while (chartData.labels.length < totalDays) {
+            const lastDate = new Date(chartData.labels[chartData.labels.length - 1]);
+            lastDate.setDate(lastDate.getDate() + 1);
+            chartData.labels.push(lastDate.toISOString().split('T')[0]);
+        }
+
+        for (let i = 0; i < totalDays; i++) {
+            let val = slope * i + intercept;
+            // Apply seasonality/navidad effect if requested
+            if (config.navidad && i >= 304) val *= 1.2;
+            forecastData.push(val);
+        }
+
+        // Add Forecast Dataset
+        chartData.datasets.push({
+            label: 'Proyección',
+            data: forecastData,
+            borderColor: '#fbbf24', // Yellow
+            borderDash: [5, 5],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.1
+        });
+    }
+
+    // Dashboard Rendering (Multi-line comparison)
+    if (type === 'dashboard') {
+        gameState.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: retailData.dates, // Assuming all share same dates/length for simplicity or use longest
+                datasets: [
+                    {
+                        label: 'Retail',
+                        data: retailData.values,
+                        borderColor: '#667eea',
+                        tension: 0.1,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'SaaS',
+                        // Map SaaS months to days (approx) or just plot as is if length matches. 
+                        // For simplicity in this specific educational context, we'll map SaaS values to span the year
+                        data: Array(304).fill(0).map((_, i) => {
+                            const monthIdx = Math.floor(i / 30.4);
+                            return saasData.values[Math.min(monthIdx, 11)];
+                        }),
+                        borderColor: '#4ade80',
+                        tension: 0.4,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'E-commerce',
+                        data: ecommerceData.values,
+                        borderColor: '#ff6b6b',
+                        tension: 0.1,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: { display: true },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+        return; // Exit as we created a specific chart instance
     }
 
     gameState.chart = new Chart(ctx, { type: 'line', data: chartData, options });
@@ -741,6 +857,15 @@ function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(sett
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+}
+
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('active');
+}
+
+function closeHelpModal() {
+    document.getElementById('helpModal').classList.remove('active');
 }
 function selectOption(btn) {
     document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
@@ -940,3 +1065,5 @@ window.checkAnswer = checkAnswer;
 window.nextQuestion = nextQuestion;
 window.showHint = showHint;
 window.closeModal = closeCompletionModal;
+window.closeHelpModal = closeHelpModal;
+window.showModal = showModal;
