@@ -838,16 +838,20 @@ function generateCertificate() {
     ctx.lineWidth = 10;
     ctx.strokeRect(20, 20, 760, 560);
 
+    // Medal icon
+    ctx.font = '60px Arial';
+    ctx.fillText('🏅', 400, 80);
+
     // Title
     ctx.fillStyle = '#667eea';
     ctx.font = 'bold 48px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Certificado de Detective', 400, 120);
+    ctx.fillText('Certificado de Detective', 400, 140);
 
     // Subtitle
     ctx.fillStyle = '#ffffff';
     ctx.font = '24px Arial';
-    ctx.fillText('Detective de Datos', 400, 170);
+    ctx.fillText('Detective de Datos', 400, 190);
 
     // Certifica a
     ctx.font = '20px Arial';
