@@ -736,6 +736,15 @@ function handleFeedback(isCorrect, question) {
     playSound(isCorrect ? 'correct' : 'incorrect');
     announce(isCorrect ? "Correcto" : "Incorrecto");
 
+    // Confetti effect for correct answers
+    if (isCorrect && typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+
     document.getElementById('btnSubmit').style.display = 'none';
     const btnNext = document.getElementById('btnNext');
     btnNext.style.display = 'inline-flex';
@@ -870,5 +879,6 @@ window.downloadCertificate = downloadCertificate;
 window.closeCertificateModal = closeCertificateModal;
 window.restartGame = restartGame;
 window.checkAnswer = checkAnswer;
+window.nextQuestion = nextQuestion;
 window.showHint = showHint;
 window.closeModal = closeCompletionModal;
